@@ -2,12 +2,19 @@ package com.archangel_design.core_wars.utils;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
-import javax.print.attribute.IntegerSyntax;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public class MapDrawer {
+
+    private static final Integer cellSize = 30;
+    private static final Paint colorEmpty = Color.rgb(70, 70, 70, 0.7);
+    private static final Paint colorBarrier = Color.rgb(20, 20, 20, 1);
+    private static final Paint colorBomb = Color.rgb(150, 0, 10, 0.4);
+    private static final Paint colorTeleport = Color.rgb(10, 0, 150, 0.4);
+    private static final Paint colorTrap = Color.rgb(200, 150, 10, 0.4);
 
     public void drawMap(GraphicsContext context, Map map) {
         Iterator rowOperator = map.getRows().entrySet().iterator();
@@ -27,12 +34,85 @@ public class MapDrawer {
     }
 
     private void drawCell(Cell cell, GraphicsContext context) {
-        context.setStroke(Color.BLACK);
-        context.setFill(Color.GREEN);
         context.setLineWidth(1);
-        Integer x = cell.getRealPositionX(30);
-        Integer y = cell.getRealPositionY(30);
-        context.fillRect(cell.getRealPositionX(30), cell.getRealPositionY(30), 30, 30);
-        context.strokeRect(cell.getRealPositionX(30), cell.getRealPositionY(30), 30, 30);
+        switch (cell.getType()) {
+            case EMPTY:
+                drawEmpty(
+                        cell.getRealPositionX(cellSize),
+                        cell.getRealPositionY(cellSize),
+                        cellSize,
+                        context
+                );
+                break;
+            case BOMB:
+                drawBomb(
+                        cell.getRealPositionX(cellSize),
+                        cell.getRealPositionY(cellSize),
+                        cellSize,
+                        context
+                );
+                break;
+            case TRAP:
+                drawTrap(
+                        cell.getRealPositionX(cellSize),
+                        cell.getRealPositionY(cellSize),
+                        cellSize,
+                        context
+                );
+                break;
+            case BARRIER:
+                drawBarrier(
+                        cell.getRealPositionX(cellSize),
+                        cell.getRealPositionY(cellSize),
+                        cellSize,
+                        context
+                );
+                break;
+            case TELEPORT:
+                drawTeleport(
+                        cell.getRealPositionX(cellSize),
+                        cell.getRealPositionY(cellSize),
+                        cellSize,
+                        context
+                );
+                break;
+        }
     }
+
+    private void drawRect(int x, int y, int size, GraphicsContext context) {
+        context.fillRect(x, y, size, size);
+        context.strokeRect(x, y, size, size);
+    }
+
+    private void drawEmpty(final int x, final int y, final int size, GraphicsContext context) {
+        context.setStroke(Color.BLACK);
+        context.setFill(colorEmpty);
+        drawRect(x, y, size, context);
+    }
+
+    private void drawBomb(final int x, final int y, final int size, GraphicsContext context) {
+        context.setStroke(Color.BLACK);
+        context.setFill(colorBomb);
+        drawRect(x, y, size, context);
+    }
+
+    private void drawTrap(final int x, final int y, final int size, GraphicsContext context) {
+        context.setStroke(Color.BLACK);
+        context.setFill(colorTrap);
+        drawRect(x, y, size, context);
+    }
+
+    private void drawBarrier(final int x, final int y, final int size, GraphicsContext context) {
+        context.setStroke(Color.BLACK);
+        context.setFill(colorBarrier);
+        drawRect(x, y, size, context);
+    }
+
+    private void drawTeleport(final int x, final int y, final int size, GraphicsContext context) {
+        context.setStroke(Color.BLACK);
+        context.setFill(colorTeleport);
+        drawRect(x, y, size, context);
+    }
+
+
 }

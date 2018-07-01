@@ -35,4 +35,12 @@ public class Cell {
     public Integer getRealPositionY(Integer size) {
         return (positionY * size) - size;
     }
+
+    public CellType getType() {
+        return type;
+    }
+
+    public void setType(CellType type) {
+        this.type = type;
+    }
 }
