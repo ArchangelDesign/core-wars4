@@ -5,5 +5,17 @@ public enum CellType {
     BARRIER,
     TELEPORT,
     BOMB,
-    TRAP
+    TRAP;
+
+    public static CellType fromByte(byte input) {
+        switch (input) {
+            case 0: return CellType.EMPTY;
+            case 1: return CellType.BARRIER;
+            case 2: return CellType.BOMB;
+            case 3: return CellType.TELEPORT;
+            case 4: return CellType.TRAP;
+        }
+
+        throw new RuntimeException("Invalid byte given. Cannot convert to cell type.");
+    }
 }

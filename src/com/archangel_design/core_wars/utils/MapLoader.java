@@ -1,7 +1,6 @@
 package com.archangel_design.core_wars.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,8 +49,16 @@ public class MapLoader {
     private static byte[] convertToBytes(Map map) {
         List<Byte> result = new ArrayList<>();
 
-        result.add(map.getWitdth().byteValue());
+        result.add(map.getWidth().byteValue());
         result.add(map.getHeight().byteValue());
+
+        for (int x = 1; x <= map.getWidth(); x++) {
+            for (int y = 1; y <= map.getHeight(); y++) {
+                result.add((byte) x);
+                result.add((byte) y);
+                result.add(map.getCell(x, y).toByte());
+            }
+        }
 
         return convert(result);
     }

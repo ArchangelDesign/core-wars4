@@ -199,6 +199,11 @@ public class MainWindowModel extends AbstractModel {
         int indexX = mainMap.getIndex(posx);
         int indexY = mainMap.getIndex(posy);
 
+        if (currentTool == null) {
+            Alerts.errorBox("You need to select a tool first.");
+            return;
+        }
+
         mainMap.setCellType(indexX, indexY, currentTool);
         redrawMap();
 

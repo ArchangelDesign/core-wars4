@@ -43,4 +43,15 @@ public class Cell {
     public void setType(CellType type) {
         this.type = type;
     }
+
+    public Byte toByte() {
+        switch (type) {
+            case EMPTY: return 0;
+            case BARRIER: return 1;
+            case BOMB: return 2;
+            case TELEPORT: return 3;
+            case TRAP: return 4;
+        }
+        throw new RuntimeException("Missing cell type.");
+    }
 }

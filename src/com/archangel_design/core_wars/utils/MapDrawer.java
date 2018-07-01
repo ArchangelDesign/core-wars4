@@ -17,10 +17,10 @@ public class MapDrawer {
     private static final Paint colorTrap = Color.rgb(200, 150, 10, 0.4);
 
     public void drawMap(GraphicsContext context, Map map) {
-        Iterator rowOperator = map.getRows().entrySet().iterator();
+        Iterator rowIterator = map.getRows().entrySet().iterator();
 
-        while (rowOperator.hasNext()) {
-            Map.Row.Entry rowEntry = (Map.Row.Entry) rowOperator.next();
+        while (rowIterator.hasNext()) {
+            Map.Row.Entry rowEntry = (Map.Row.Entry) rowIterator.next();
             Integer positionY = (Integer) rowEntry.getKey();
             HashMap<Integer, Cell> cells = (HashMap<Integer, Cell>) rowEntry.getValue();
             Iterator columnIterator = cells.entrySet().iterator();

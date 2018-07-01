@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Map {
 
     private HashMap<Integer, Row> rows;
-    private Integer witdth;
+    private Integer width;
     private Integer height;
     private Integer cellSize = 30;
 
@@ -16,7 +16,7 @@ public class Map {
     class Row extends HashMap<Integer, Cell> {}
 
     public Map(Integer width, Integer height, Integer cellSize) {
-        this.witdth = width;
+        this.width = width;
         this.height = height;
         this.cellSize = cellSize;
 
@@ -24,7 +24,7 @@ public class Map {
     }
 
     public Map(Integer width, Integer height) {
-        this.witdth = width;
+        this.width = width;
         this.height = height;
 
         initializeMap(width, height);
@@ -50,8 +50,8 @@ public class Map {
         rows.get(y).get(x).setType(type);
     }
 
-    public Integer getWitdth() {
-        return witdth;
+    public Integer getWidth() {
+        return width;
     }
 
     public Integer getHeight() {
@@ -60,5 +60,9 @@ public class Map {
 
     public Integer getCellSize() {
         return cellSize;
+    }
+
+    public Cell getCell(int x, int y) {
+        return rows.get(y).get(x);
     }
 }
