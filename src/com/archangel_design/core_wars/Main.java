@@ -17,6 +17,7 @@ public class Main extends Application {
         initializeModels(primaryStage);
         primaryStage.setScene(mainWindowModel.getScene());
         primaryStage.setTitle("Core Wars 4");
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
