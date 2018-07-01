@@ -43,6 +43,15 @@ public class MapLoader {
 
         Map map = new Map(width.intValue(), height.intValue());
 
+        if ((bytes.length - 2) < (width * height))
+            throw new IOException("Invalid map file.");
+
+        for (int index = 2; index < bytes.length; index+=3) {
+            map.setCellType(bytes[index], bytes[index+1], CellType.fromByte(bytes[index+2]));
+            System.out.println(String.format("X: %d Y: %d type: %d", bytes[index], bytes[index+1], bytes[index+2]));
+        }
+
+
         return map;
     }
 

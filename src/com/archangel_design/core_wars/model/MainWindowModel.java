@@ -5,9 +5,6 @@ import com.archangel_design.core_wars.utils.CellType;
 import com.archangel_design.core_wars.utils.Map;
 import com.archangel_design.core_wars.utils.MapDrawer;
 import com.archangel_design.core_wars.utils.MapLoader;
-import javafx.beans.InvalidationListener;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -23,7 +20,7 @@ import java.io.IOException;
 
 public class MainWindowModel extends AbstractModel {
 
-    private static final int canvasWidth = 400;
+    private static final int canvasWidth = 500;
     private static final int canvasHeight = 600;
     private static final int windowHeight = 600;
     private static final int windowWidth = 800;
@@ -32,7 +29,7 @@ public class MainWindowModel extends AbstractModel {
     private MapDrawer mapDrawer = new MapDrawer();
     private Scene scene;
     private Stage parentStage;
-    private Map mainMap = new Map(12, 12);
+    private Map mainMap = new Map(14, 12);
     private Canvas mainCanvas = null;
     private FileChooser fileChooser = new FileChooser();
     private Label statusLabel = null;
