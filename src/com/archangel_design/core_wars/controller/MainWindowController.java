@@ -34,6 +34,16 @@ public class MainWindowController {
         updateStatusText("Current tool: Mine");
     }
 
+    public void onEmptyClicked() {
+        model.setCurrentTool(CellType.EMPTY);
+        updateStatusText("Current tool: Empty");
+    }
+
+    public void onMapClicked(javafx.scene.input.MouseEvent event) {
+        model.actionMapClicked(event);
+        model.redrawMap(mapCanvas.getGraphicsContext2D());
+    }
+
     public void setModel(MainWindowModel model) {
         this.model = model;
     }

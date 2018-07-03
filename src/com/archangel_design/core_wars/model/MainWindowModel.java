@@ -91,24 +91,21 @@ public class MainWindowModel extends AbstractModel {
     public void setCurrentTool(CellType cellType) {
         currentTool = cellType;
     }
-/*
-    private void actionMapClicked(javafx.scene.input.MouseEvent event) {
+
+    public void actionMapClicked(javafx.scene.input.MouseEvent event) {
         double posx = event.getX();
         double posy = event.getY();
 
-        int indexX = mainMap.getIndex(posx);
-        int indexY = mainMap.getIndex(posy);
+        int indexX = currentMap.getIndex(posx);
+        int indexY = currentMap.getIndex(posy);
 
         if (currentTool == null) {
             Alerts.errorBox("You need to select a tool first.");
             return;
         }
 
-        mainMap.setCellType(indexX, indexY, currentTool);
-        redrawMap();
-
-        System.out.println(String.format("X: %d | Y: %d", indexX, indexY));
+        currentMap.setCellType(indexX, indexY, currentTool);
     }
-*/
+
 
 }
