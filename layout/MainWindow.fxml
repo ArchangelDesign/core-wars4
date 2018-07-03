@@ -15,7 +15,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#onSaveMapClicked" text="Save map" />
-                  <MenuItem mnemonicParsing="false" text="Load map" />
+                  <MenuItem mnemonicParsing="false" onAction="#onLoadMapClicked" text="Load map" />
                   <SeparatorMenuItem mnemonicParsing="false" />
               <MenuItem mnemonicParsing="false" onAction="#closeApplication" text="Close" />
             </items>
@@ -37,7 +37,12 @@
           <AnchorPane maxWidth="300.0" minHeight="300.0" minWidth="0.0" prefHeight="299.0" prefWidth="270.0" SplitPane.resizableWithParent="false" />
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <Canvas fx:id="mapCanvas" blendMode="SOFT_LIGHT" height="800.0" layoutY="-52.0" mouseTransparent="true" onMouseClicked="#onMapClicked" width="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Canvas fx:id="mapCanvas" height="800.0" layoutY="-52.0" onMouseClicked="#onMapClicked" width="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../assets/mine.png" />
+                     </image>
+                  </ImageView>
                </children>
             </AnchorPane>
         </items>

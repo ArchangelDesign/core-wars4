@@ -1,6 +1,7 @@
 package com.archangel_design.core_wars.utils;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -33,6 +34,20 @@ public class MapRenderer {
 
     private void drawCell(Cell cell, GraphicsContext context) {
         context.setLineWidth(1);
+        if (!cell.getType().equals(CellType.EMPTY)) {
+            // if empty cells have background color
+            // this call prevents white background
+            // for other types. If we're drawing
+            // empty however, we do not redraw
+            // to avoid darkening since we're using RGBA
+            //@todo: this should not be the case
+            drawEmpty(
+                    cell.getRealPositionX(cellSize),
+                    cell.getRealPositionY(cellSize),
+                    cellSize,
+                    context
+            );
+        }
         switch (cell.getType()) {
             case EMPTY:
                 drawEmpty(
@@ -88,11 +103,9 @@ public class MapRenderer {
         drawRect(x, y, size, context);
     }
 
-    private void drawMine(final int x, final int y, final int size, GraphicsContext context) {
-//        context.setStroke(Color.BLACK);
-//        context.setFill(colorBomb);
-//        drawRect(x, y, size, context);
-            context.drawImage(Assets.getImage("mine.png"), x, y, size, size);
+    public void drawMine(final int x, final int y, final int size, GraphicsContext context) {
+        Image image = Assets.getImage("mine.png");
+        context.drawImage(image, x, y, size, size);
     }
 
     private void drawTrap(final int x, final int y, final int size, GraphicsContext context) {

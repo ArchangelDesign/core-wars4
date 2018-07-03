@@ -1,6 +1,7 @@
 package com.archangel_design.core_wars.controller;
 
 import com.archangel_design.core_wars.model.MainWindowModel;
+import com.archangel_design.core_wars.utils.Alerts;
 import com.archangel_design.core_wars.utils.CellType;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -60,8 +61,12 @@ public class MainWindowController {
         model.saveMap(parentStage);
     }
 
+    public void onLoadMapClicked() {
+        if (model.actionLoadMap(parentStage))
+            model.redrawMap(mapCanvas.getGraphicsContext2D());
+    }
+
     public void onShow() {
-        mapCanvas.getGraphicsContext2D().setGlobalAlpha();
         model.redrawMap(mapCanvas.getGraphicsContext2D());
     }
 }

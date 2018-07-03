@@ -106,6 +106,4 @@ public class MainWindowModel extends AbstractModel {
 
         currentMap.setCellType(indexX, indexY, currentTool);
     }
-
-
 }
