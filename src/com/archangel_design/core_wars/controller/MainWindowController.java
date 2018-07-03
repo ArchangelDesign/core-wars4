@@ -1,14 +1,11 @@
 package com.archangel_design.core_wars.controller;
 
 import com.archangel_design.core_wars.model.MainWindowModel;
-import com.archangel_design.core_wars.utils.Alerts;
-import javafx.application.Application;
+import com.archangel_design.core_wars.utils.CellType;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import javax.swing.text.html.ImageView;
@@ -28,13 +25,13 @@ public class MainWindowController {
 
     Stage parentStage;
 
-
     private void updateStatusText(String text) {
         statusText.setText(text);
     }
 
     public void onBombClicked() {
-
+        model.setCurrentTool(CellType.MINE);
+        updateStatusText("Current tool: Mine");
     }
 
     public void setModel(MainWindowModel model) {
@@ -46,6 +43,14 @@ public class MainWindowController {
     }
 
     public void closeApplication() {
+        Platform.exit();
+    }
 
+    public void onSaveMapClicked() {
+        model.saveMap(parentStage);
+    }
+
+    public void onShow() {
+        model.redrawMap(mapCanvas.getGraphicsContext2D());
     }
 }

@@ -7,6 +7,7 @@ import com.archangel_design.core_wars.utils.Map;
 import com.archangel_design.core_wars.utils.MapRenderer;
 import com.archangel_design.core_wars.utils.MapLoader;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Parent;
@@ -18,6 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ToolBar;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,12 +34,12 @@ public class MainWindowModel extends AbstractModel {
     private MapRenderer mapRenderer = new MapRenderer();
     private FileChooser fileChooser = new FileChooser();
 
-
     private CellType currentTool;
+    private Map currentMap = new Map(10, 10);
 
-    private void redrawMap(GraphicsContext gc, Map map) {
+    public void redrawMap(GraphicsContext gc) {
         gc.clearRect(0, 0, canvasWidth, canvasHeight);
-        mapRenderer.drawMap(gc, map);
+        mapRenderer.drawMap(gc, currentMap);
     }
 
     @Override
@@ -49,38 +51,45 @@ public class MainWindowModel extends AbstractModel {
             MainWindowController controller = loader.getController();
             controller.setModel(this);
             controller.setParentStage(primaryStage);
+            primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, event -> controller.onShow());
         } catch (IOException e) {
             e.printStackTrace();
         }
         return new Scene(p, 800, 600);
     }
 
-    private void saveMap(Map map) {
+    public void saveMap(Stage parent) {
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("CW Map file", "*.cw4")
         );
-        File f = fileChooser.showSaveDialog(null);
+        File f = fileChooser.showSaveDialog(parent);
         if (f == null)
             return;
         try {
-            MapLoader.saveMap(map, f.getAbsolutePath());
+            MapLoader.saveMap(currentMap, f.getAbsolutePath());
         } catch (IOException e) {
             Alerts.errorBox("Could not save file. " + e.getMessage());
         }
     }
 
-    private void actionLoadMap(Map map) {
+    public boolean actionLoadMap(Stage parent) {
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("CW Map file", "*.cw4")
         );
-        File f = fileChooser.showOpenDialog(null);
+        File f = fileChooser.showOpenDialog(parent);
         if (f == null)
-            return;
+            return false;
         try {
-            map = MapLoader.loadMap(f.getAbsolutePath());
+            currentMap = MapLoader.loadMap(f.getAbsolutePath());
+            return true;
         } catch (Exception e) {
             Alerts.errorBox("Could not load map. " + e.getMessage());
+            return false;
         }
+    }
+
+    public void setCurrentTool(CellType cellType) {
+        currentTool = cellType;
     }
 /*
     private void actionMapClicked(javafx.scene.input.MouseEvent event) {
