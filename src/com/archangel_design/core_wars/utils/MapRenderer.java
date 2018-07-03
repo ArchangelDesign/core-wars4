@@ -43,7 +43,7 @@ public class MapRenderer {
                 );
                 break;
             case MINE:
-                drawBomb(
+                drawMine(
                         cell.getRealPositionX(cellSize),
                         cell.getRealPositionY(cellSize),
                         cellSize,
@@ -88,10 +88,11 @@ public class MapRenderer {
         drawRect(x, y, size, context);
     }
 
-    private void drawBomb(final int x, final int y, final int size, GraphicsContext context) {
-        context.setStroke(Color.BLACK);
-        context.setFill(colorBomb);
-        drawRect(x, y, size, context);
+    private void drawMine(final int x, final int y, final int size, GraphicsContext context) {
+//        context.setStroke(Color.BLACK);
+//        context.setFill(colorBomb);
+//        drawRect(x, y, size, context);
+            context.drawImage(Assets.getImage("mine.png"), x, y, size, size);
     }
 
     private void drawTrap(final int x, final int y, final int size, GraphicsContext context) {

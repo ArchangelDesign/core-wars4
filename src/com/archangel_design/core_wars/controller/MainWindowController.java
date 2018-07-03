@@ -61,6 +61,7 @@ public class MainWindowController {
     }
 
     public void onShow() {
+        mapCanvas.getGraphicsContext2D().setGlobalAlpha();
         model.redrawMap(mapCanvas.getGraphicsContext2D());
     }
 }

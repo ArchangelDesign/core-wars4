@@ -37,7 +37,7 @@
           <AnchorPane maxWidth="300.0" minHeight="300.0" minWidth="0.0" prefHeight="299.0" prefWidth="270.0" SplitPane.resizableWithParent="false" />
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <Canvas fx:id="mapCanvas" height="800.0" layoutY="-52.0" onMouseClicked="#onMapClicked" width="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <Canvas fx:id="mapCanvas" blendMode="SOFT_LIGHT" height="800.0" layoutY="-52.0" mouseTransparent="true" onMouseClicked="#onMapClicked" width="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
         </items>
