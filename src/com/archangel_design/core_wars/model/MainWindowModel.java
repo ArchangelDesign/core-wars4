@@ -106,4 +106,8 @@ public class MainWindowModel extends AbstractModel {
 
         currentMap.setCellType(indexX, indexY, currentTool);
     }
+
+    public int getPortalCount() {
+        return currentMap.getPortalCount();
+    }
 }

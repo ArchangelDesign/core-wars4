@@ -81,7 +81,7 @@ public class MapRenderer {
                         context
                 );
                 break;
-            case TELEPORT:
+            case PORTAL:
                 drawTeleport(
                         cell.getRealPositionX(cellSize),
                         cell.getRealPositionY(cellSize),

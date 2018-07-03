@@ -65,4 +65,8 @@ public class Map {
     public Cell getCell(int x, int y) {
         return rows.get(y).get(x);
     }
+
+    public int getPortalCount() {
+        return 0;
+    }
 }

@@ -34,15 +34,13 @@
       </MenuBar>
       <SplitPane dividerPositions="0.29797979797979796" layoutX="127.0" layoutY="103.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="69.0">
         <items>
-          <AnchorPane maxWidth="300.0" minHeight="300.0" minWidth="0.0" prefHeight="299.0" prefWidth="270.0" SplitPane.resizableWithParent="false" />
+          <AnchorPane maxWidth="300.0" minHeight="300.0" minWidth="0.0" prefHeight="299.0" prefWidth="270.0" SplitPane.resizableWithParent="false">
+               <children>
+                  <ListView fx:id="bugList" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
                   <Canvas fx:id="mapCanvas" height="800.0" layoutY="-52.0" onMouseClicked="#onMapClicked" width="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                  <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="29.0" layoutY="34.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../assets/mine.png" />
-                     </image>
-                  </ImageView>
                </children>
             </AnchorPane>
         </items>

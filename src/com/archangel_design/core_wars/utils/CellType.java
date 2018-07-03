@@ -3,7 +3,7 @@ package com.archangel_design.core_wars.utils;
 public enum CellType {
     EMPTY,
     BARRIER,
-    TELEPORT,
+    PORTAL,
     MINE,
     TRAP;
 
@@ -12,7 +12,7 @@ public enum CellType {
             case 0: return CellType.EMPTY;
             case 1: return CellType.BARRIER;
             case 2: return CellType.MINE;
-            case 3: return CellType.TELEPORT;
+            case 3: return CellType.PORTAL;
             case 4: return CellType.TRAP;
         }
 

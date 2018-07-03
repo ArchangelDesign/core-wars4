@@ -49,7 +49,7 @@ public class Cell {
             case EMPTY: return 0;
             case BARRIER: return 1;
             case MINE: return 2;
-            case TELEPORT: return 3;
+            case PORTAL: return 3;
             case TRAP: return 4;
         }
         throw new RuntimeException("Missing cell type.");
