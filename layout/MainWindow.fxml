@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.archangel_design.core_wars.controller.MainWindowController">
+   <children>
+      <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#closeApplicacion" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <SplitPane dividerPositions="0.29797979797979796" layoutX="127.0" layoutY="103.0" prefHeight="160.0" prefWidth="200.0" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="69.0">
+        <items>
+          <AnchorPane maxWidth="300.0" minHeight="300.0" minWidth="0.0" prefHeight="299.0" prefWidth="270.0" SplitPane.resizableWithParent="false" />
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <Canvas fx:id="mapCanvas" height="800.0" layoutY="-52.0" width="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <ToolBar layoutX="1.0" layoutY="29.0" prefHeight="40.0" prefWidth="262.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <items>
+            <ImageView fx:id="toolBomb" fitHeight="30.0" fitWidth="30.0" onMouseClicked="#onBombClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/mine.png" />
+               </image>
+            </ImageView>
+          <Button mnemonicParsing="false" text="Button" />
+        </items>
+      </ToolBar>
+      <Pane layoutX="7.0" layoutY="286.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Label fx:id="statusText" layoutX="14.0" layoutY="6.0" minWidth="600.0" text="Label" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

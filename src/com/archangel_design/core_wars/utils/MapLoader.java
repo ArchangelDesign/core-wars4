@@ -48,7 +48,6 @@ public class MapLoader {
 
         for (int index = 2; index < bytes.length; index+=3) {
             map.setCellType(bytes[index], bytes[index+1], CellType.fromByte(bytes[index+2]));
-            System.out.println(String.format("X: %d Y: %d type: %d", bytes[index], bytes[index+1], bytes[index+2]));
         }
 
 

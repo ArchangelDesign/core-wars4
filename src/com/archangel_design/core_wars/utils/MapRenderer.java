@@ -7,7 +7,7 @@ import javafx.scene.paint.Paint;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class MapDrawer {
+public class MapRenderer {
 
     private static final Integer cellSize = 30;
     private static final Paint colorEmpty = Color.rgb(70, 70, 70, 0.7);
@@ -21,12 +21,10 @@ public class MapDrawer {
 
         while (rowIterator.hasNext()) {
             Map.Row.Entry rowEntry = (Map.Row.Entry) rowIterator.next();
-            Integer positionY = (Integer) rowEntry.getKey();
             HashMap<Integer, Cell> cells = (HashMap<Integer, Cell>) rowEntry.getValue();
             Iterator columnIterator = cells.entrySet().iterator();
             while (columnIterator.hasNext()) {
                 Map.Row.Entry colEntry = (Map.Row.Entry) columnIterator.next();
-                Integer positionX = (Integer) colEntry.getKey();
                 Cell cell = (Cell) colEntry.getValue();
                 drawCell(cell, context);
             }
@@ -44,7 +42,7 @@ public class MapDrawer {
                         context
                 );
                 break;
-            case BOMB:
+            case MINE:
                 drawBomb(
                         cell.getRealPositionX(cellSize),
                         cell.getRealPositionY(cellSize),

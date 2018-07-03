@@ -4,14 +4,14 @@ public enum CellType {
     EMPTY,
     BARRIER,
     TELEPORT,
-    BOMB,
+    MINE,
     TRAP;
 
     public static CellType fromByte(byte input) {
         switch (input) {
             case 0: return CellType.EMPTY;
             case 1: return CellType.BARRIER;
-            case 2: return CellType.BOMB;
+            case 2: return CellType.MINE;
             case 3: return CellType.TELEPORT;
             case 4: return CellType.TRAP;
         }

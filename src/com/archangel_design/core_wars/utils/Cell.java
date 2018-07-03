@@ -48,7 +48,7 @@ public class Cell {
         switch (type) {
             case EMPTY: return 0;
             case BARRIER: return 1;
-            case BOMB: return 2;
+            case MINE: return 2;
             case TELEPORT: return 3;
             case TRAP: return 4;
         }

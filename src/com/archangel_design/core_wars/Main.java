@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    MainWindowModel mainWindowModel;
+    private MainWindowModel mainWindowModel = new MainWindowModel();
 
     public static void main(String[] args) {
         launch(args);
@@ -14,14 +14,10 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        initializeModels(primaryStage);
-        primaryStage.setScene(mainWindowModel.getScene());
+        primaryStage.setScene(mainWindowModel.getScene(primaryStage));
         primaryStage.setTitle("Core Wars 4");
-        primaryStage.setResizable(false);
+//        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
-    private void initializeModels(Stage primaryStage) {
-        mainWindowModel = new MainWindowModel(primaryStage);
-    }
 }
