@@ -6,6 +6,8 @@ import com.archangel_design.core_wars.utils.CellType;
 import com.archangel_design.core_wars.utils.Map;
 import com.archangel_design.core_wars.utils.MapRenderer;
 import com.archangel_design.core_wars.utils.MapLoader;
+import com.archangel_design.core_wars.utils.bugs.BugEntity;
+import com.archangel_design.core_wars.utils.bugs.Direction;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +25,8 @@ import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainWindowModel extends AbstractModel {
 
@@ -36,10 +40,19 @@ public class MainWindowModel extends AbstractModel {
 
     private CellType currentTool;
     private Map currentMap = new Map(10, 10);
+    private List<BugEntity> bugs = new ArrayList<>();
 
     public void redrawMap(GraphicsContext gc) {
         gc.clearRect(0, 0, canvasWidth, canvasHeight);
         mapRenderer.drawMap(gc, currentMap);
+        bugs.forEach(b -> mapRenderer.drawBug(
+                currentMap.getCell(b.getX(), b.getY()).getRealPositionX(30),
+                currentMap.getCell(b.getX(), b.getY()).getRealPositionY(30),
+                1,
+                30,
+                b.getDirection(),
+                gc
+        ));
     }
 
     @Override
@@ -109,5 +122,15 @@ public class MainWindowModel extends AbstractModel {
 
     public int getPortalCount() {
         return currentMap.getPortalCount();
+    }
+
+    public void addBug(int x, int y, String name, String path) {
+        BugEntity e = new BugEntity();
+        e.setName(name)
+                .setDirection(Direction.UP)
+                .setX(x)
+                .setY(y)
+                .setPath(path);
+        bugs.add(e);
     }
 }

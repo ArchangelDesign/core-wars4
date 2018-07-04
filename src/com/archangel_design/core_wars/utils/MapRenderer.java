@@ -1,10 +1,15 @@
 package com.archangel_design.core_wars.utils;
 
+import com.archangel_design.core_wars.utils.bugs.Direction;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -126,5 +131,7 @@ public class MapRenderer {
         drawRect(x, y, size, context);
     }
 
-
+    public void drawBug(int x, int y, int number, int size, Direction direction, GraphicsContext context) {
+        context.drawImage(Assets.getImage("bug1.png"), x, y, size, size);
+    }
 }

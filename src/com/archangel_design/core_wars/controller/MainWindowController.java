@@ -3,6 +3,7 @@ package com.archangel_design.core_wars.controller;
 import com.archangel_design.core_wars.model.MainWindowModel;
 import com.archangel_design.core_wars.utils.Alerts;
 import com.archangel_design.core_wars.utils.CellType;
+import com.archangel_design.core_wars.utils.bugs.BugLoader;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -14,6 +15,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.stage.Stage;
 
 import javax.swing.text.html.ImageView;
+import java.util.HashMap;
 
 public class MainWindowController {
 
@@ -28,6 +30,8 @@ public class MainWindowController {
 
     @FXML
     ListView<String> bugList;
+
+    HashMap<String, String> bugRepository;
 
     MainWindowModel model;
 
@@ -77,12 +81,15 @@ public class MainWindowController {
         bugList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         model.redrawMap(mapCanvas.getGraphicsContext2D());
         loadBugList();
-        bugList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                onBugSelected();
-            }
-        });
+        bugList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> onBugSelected()
+        );
+
+        model.addBug(1, 1,
+                bugRepository.entrySet().stream().findFirst().get().getKey(),
+                bugRepository.entrySet().stream().findFirst().get().getValue()
+        );
+        model.redrawMap(mapCanvas.getGraphicsContext2D());
     }
 
     private void onBugSelected() {
@@ -92,9 +99,9 @@ public class MainWindowController {
     }
 
     public void loadBugList() {
-        bugList.getItems().add("item 1");
-        bugList.getItems().add("item 2");
-        bugList.getItems().add("item 3");
-        bugList.getItems().add("item 4");
+        bugRepository = BugLoader.loadBugs();
+        bugRepository.forEach(
+                (key, value) -> bugList.getItems().add(key)
+        );
     }
 }

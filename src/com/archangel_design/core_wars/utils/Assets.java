@@ -1,6 +1,9 @@
 package com.archangel_design.core_wars.utils;
 
+import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -15,5 +18,13 @@ public class Assets {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static Image getImage(String name, double rotation) {
+        ImageView iv = new ImageView(getImage(name));
+
+        SnapshotParameters params = new SnapshotParameters();
+        params.setFill(Color.TRANSPARENT);
+        return iv.snapshot(params, null);
     }
 }
