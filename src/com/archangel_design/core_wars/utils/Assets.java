@@ -1,5 +1,6 @@
 package com.archangel_design.core_wars.utils;
 
+import com.archangel_design.core_wars.utils.bugs.Direction;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,9 +21,14 @@ public class Assets {
         return null;
     }
 
-    public static Image getImage(String name, double rotation) {
+    public static Image getImage(String name, Direction rotation) {
         ImageView iv = new ImageView(getImage(name));
 
+        switch (rotation) {
+            case DOWN: iv.setRotate(180);break;
+            case LEFT: iv.setRotate(270);break;
+            case RIGHT: iv.setRotate(90);break;
+        }
         SnapshotParameters params = new SnapshotParameters();
         params.setFill(Color.TRANSPARENT);
         return iv.snapshot(params, null);

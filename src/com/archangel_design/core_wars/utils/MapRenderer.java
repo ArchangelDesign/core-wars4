@@ -132,6 +132,6 @@ public class MapRenderer {
     }
 
     public void drawBug(int x, int y, int number, int size, Direction direction, GraphicsContext context) {
-        context.drawImage(Assets.getImage("bug1.png"), x, y, size, size);
+        context.drawImage(Assets.getImage("bug1.png", direction), x, y, size, size);
     }
 }

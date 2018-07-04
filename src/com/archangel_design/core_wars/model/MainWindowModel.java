@@ -127,7 +127,7 @@ public class MainWindowModel extends AbstractModel {
     public void addBug(int x, int y, String name, String path) {
         BugEntity e = new BugEntity();
         e.setName(name)
-                .setDirection(Direction.UP)
+                .setDirection(Direction.DOWN)
                 .setX(x)
                 .setY(y)
                 .setPath(path);
