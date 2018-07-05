@@ -52,6 +52,11 @@
                   <Image url="@../assets/mine.png" />
                </image>
             </ImageView>
+            <ImageView fitHeight="150.0" fitWidth="30.0" onMouseClicked="#onBarrierClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../assets/barrier.png" />
+               </image>
+            </ImageView>
           <Button mnemonicParsing="false" onAction="#onEmptyClicked" text="EMPTY" />
         </items>
       </ToolBar>

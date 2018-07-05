@@ -120,9 +120,8 @@ public class MapRenderer {
     }
 
     private void drawBarrier(final int x, final int y, final int size, GraphicsContext context) {
-        context.setStroke(Color.BLACK);
-        context.setFill(colorBarrier);
-        drawRect(x, y, size, context);
+        Image image = Assets.getImage("barrier.png");
+        context.drawImage(image, x, y, size, size);
     }
 
     private void drawTeleport(final int x, final int y, final int size, GraphicsContext context) {

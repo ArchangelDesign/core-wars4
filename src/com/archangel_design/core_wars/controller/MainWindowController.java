@@ -46,6 +46,11 @@ public class MainWindowController {
         updateStatusText("Current tool: Mine");
     }
 
+    public void onBarrierClicked() {
+        model.setCurrentTool(CellType.BARRIER);
+        updateStatusText("Current tool: Barrier");
+    }
+
     public void onEmptyClicked() {
         model.setCurrentTool(CellType.EMPTY);
         updateStatusText("Current tool: Empty");
