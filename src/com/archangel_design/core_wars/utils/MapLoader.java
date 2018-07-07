@@ -20,6 +20,11 @@ public class MapLoader {
         return readMap(bytes);
     }
 
+    public static String getFullPath(String mapFile) {
+        File f = new File("maps/" + mapFile);
+        return f.getAbsolutePath();
+    }
+
     public static List<String> getMapList() {
         List<String> result = new ArrayList<>();
         File folder = new File(MAP_FOLDER);

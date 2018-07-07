@@ -133,4 +133,8 @@ public class MainWindowModel extends AbstractModel {
                 .setPath(path);
         bugs.add(e);
     }
+
+    public void loadMap(Map theMap) {
+        this.currentMap = theMap;
+    }
 }

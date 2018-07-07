@@ -10,6 +10,7 @@ import com.archangel_design.core_wars.utils.bugs.BugLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
@@ -17,6 +18,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.swing.text.html.ImageView;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class MainWindowController implements CoreWarsController {
@@ -102,6 +104,9 @@ public class MainWindowController implements CoreWarsController {
         bugList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> onBugSelected()
         );
+        mapList.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> onMapSelected(newValue)
+        );
 
         model.addBug(1, 1,
                 bugRepository.entrySet().stream().findFirst().get().getKey(),
@@ -118,6 +123,19 @@ public class MainWindowController implements CoreWarsController {
         int bugCount = bugList.getSelectionModel().getSelectedItems().size();
         if (bugCount > model.getPortalCount())
             Alerts.errorBox("The map does not support selected amount of bugs. You need to add more portals.");
+    }
+
+    public void onMapSelected(String selectedMap) {
+        if (selectedMap == null)
+            return;
+
+        try {
+            model.loadMap(MapLoader.loadMap(MapLoader.getFullPath(selectedMap)));
+        } catch (IOException e) {
+            Alerts.errorBox("Couldn't load map " + selectedMap);
+            return;
+        }
+        model.redrawMap(mapCanvas.getGraphicsContext2D());
     }
 
     public void onStartSimulationClicked() {
