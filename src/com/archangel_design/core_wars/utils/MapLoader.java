@@ -7,14 +7,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MapLoader {
+
+    public static final String MAP_FOLDER = "maps";
 
     public static Map loadMap(String filename) throws IOException {
         byte[] bytes = readFile(filename);
 
         return readMap(bytes);
+    }
+
+    public static List<String> getMapList() {
+        List<String> result = new ArrayList<>();
+        File folder = new File(MAP_FOLDER);
+        List<File> fileList = Arrays.asList(folder.listFiles());
+        fileList.forEach(f -> result.add(f.getName()));
+
+        return result;
     }
 
     public static void saveMap(Map map, String filename) throws IOException {

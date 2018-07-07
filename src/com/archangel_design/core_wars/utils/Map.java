@@ -8,16 +8,16 @@ public class Map {
     private Integer width;
     private Integer height;
     private Integer cellSize = 30;
+    private int portalCount = 0;
 
     public int getIndex(double realPosition) {
         return (int) Math.ceil(realPosition / cellSize);
     }
 
-    class Row extends HashMap<Integer, Cell> {}
+    class Row extends HashMap<Integer, Cell> {
+    }
 
     public Map(Integer width, Integer height, Integer cellSize) {
-        this.width = width;
-        this.height = height;
         this.cellSize = cellSize;
 
         initializeMap(width, height);
@@ -67,6 +67,13 @@ public class Map {
     }
 
     public int getPortalCount() {
-        return 0;
+        portalCount = 0;
+        rows.forEach((y, row) -> row.forEach(
+                (x, cell) -> {
+                    if (cell.getType().equals(CellType.PORTAL)) portalCount++;
+                }
+        ));
+
+        return portalCount;
     }
 }

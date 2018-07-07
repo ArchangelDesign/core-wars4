@@ -3,13 +3,9 @@ package com.archangel_design.core_wars.utils;
 import com.archangel_design.core_wars.utils.bugs.Direction;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -87,7 +83,7 @@ public class MapRenderer {
                 );
                 break;
             case PORTAL:
-                drawTeleport(
+                drawPortal(
                         cell.getRealPositionX(cellSize),
                         cell.getRealPositionY(cellSize),
                         cellSize,
@@ -124,10 +120,9 @@ public class MapRenderer {
         context.drawImage(image, x, y, size, size);
     }
 
-    private void drawTeleport(final int x, final int y, final int size, GraphicsContext context) {
-        context.setStroke(Color.BLACK);
-        context.setFill(colorTeleport);
-        drawRect(x, y, size, context);
+    private void drawPortal(final int x, final int y, final int size, GraphicsContext context) {
+        Image image = Assets.getImage("portal.png");
+        context.drawImage(image, x, y, size, size);
     }
 
     public void drawBug(int x, int y, int number, int size, Direction direction, GraphicsContext context) {
