@@ -20,7 +20,8 @@ public class SoundPlayer {
         switch (snd) {
             case AMB_NATURE:
                 ambientSound = Assets.getAudio("nature-ambience.mp3");
-                ambientSound.setCycleCount(AudioClip.INDEFINITE);
+                // https://bugs.openjdk.java.net/browse/JDK-8088116
+                //ambientSound.setCycleCount(10);
                 ambientSound.play(0.6);
         }
     }

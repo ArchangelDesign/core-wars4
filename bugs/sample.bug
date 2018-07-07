@@ -1,6 +1,7 @@
 
 function onStart() {
 
+    someMethor;
 }
 
 function loop() {

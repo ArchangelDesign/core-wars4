@@ -7,6 +7,7 @@ import com.archangel_design.core_wars.utils.Sound;
 import com.archangel_design.core_wars.utils.SoundPlayer;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.BugLoader;
+import com.archangel_design.core_wars.utils.compiler.Parser;
 import javafx.fxml.FXML;
 import javafx.geometry.Dimension2D;
 import javafx.scene.canvas.Canvas;
@@ -40,6 +41,7 @@ public class SimulationWindowController implements CoreWarsController {
         conPrint("Starting...");
         loadMap();
         loadBugs();
+        compileBugs();
         conPrint("Ready for simulation.");
         SoundPlayer.playSound(Sound.SND_OPENING);
         SoundPlayer.playAmbience(Sound.AMB_NATURE);
@@ -115,5 +117,10 @@ public class SimulationWindowController implements CoreWarsController {
         });
 
         mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
+    }
+
+    private void compileBugs() {
+        conPrint("Compiling bugs...");
+        bugs.forEach((s, bugEntity) -> Parser.loadMethods(bugEntity.getPath()));
     }
 }
