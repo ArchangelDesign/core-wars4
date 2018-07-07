@@ -16,7 +16,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setScene(mainWindowModel.getScene(primaryStage));
         primaryStage.setTitle("Core Wars 4");
-//        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

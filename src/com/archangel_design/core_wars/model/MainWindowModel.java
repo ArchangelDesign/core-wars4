@@ -43,8 +43,7 @@ public class MainWindowModel extends AbstractModel {
     private List<BugEntity> bugs = new ArrayList<>();
 
     public void redrawMap(GraphicsContext gc) {
-        gc.clearRect(0, 0, canvasWidth, canvasHeight);
-        mapRenderer.drawMap(gc, currentMap);
+        mapRenderer.redrawMap(gc, currentMap);
         bugs.forEach(b -> mapRenderer.drawBug(
                 currentMap.getCell(b.getX(), b.getY()).getRealPositionX(30),
                 currentMap.getCell(b.getX(), b.getY()).getRealPositionY(30),
@@ -136,5 +135,13 @@ public class MainWindowModel extends AbstractModel {
 
     public void loadMap(Map theMap) {
         this.currentMap = theMap;
+    }
+
+    public Map getCurrentMap() {
+        return currentMap;
+    }
+
+    public void clearMap(GraphicsContext gc) {
+        mapRenderer.clearMap(currentMap, gc);
     }
 }

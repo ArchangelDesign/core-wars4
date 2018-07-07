@@ -18,6 +18,11 @@ public class MapRenderer {
     private static final Paint colorTeleport = Color.rgb(10, 0, 150, 0.4);
     private static final Paint colorTrap = Color.rgb(200, 150, 10, 0.4);
 
+    public void redrawMap(GraphicsContext gc, Map currentMap) {
+        gc.clearRect(0, 0, currentMap.getWidth() * 30, currentMap.getHeight() * 30);
+        drawMap(gc, currentMap);
+    }
+
     public void drawMap(GraphicsContext context, Map map) {
         Iterator rowIterator = map.getRows().entrySet().iterator();
 
@@ -127,5 +132,10 @@ public class MapRenderer {
 
     public void drawBug(int x, int y, int number, int size, Direction direction, GraphicsContext context) {
         context.drawImage(Assets.getImage("bug1.png", direction), x, y, size, size);
+    }
+
+    public void clearMap(Map currentMap, GraphicsContext gc) {
+        gc.clearRect(0, 0, currentMap.getWidth() * 30, currentMap.getHeight() * 30);
+
     }
 }

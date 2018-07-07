@@ -5,17 +5,16 @@ import com.archangel_design.core_wars.model.MainWindowModel;
 import com.archangel_design.core_wars.model.SimulationWindowModel;
 import com.archangel_design.core_wars.utils.Alerts;
 import com.archangel_design.core_wars.utils.CellType;
+import com.archangel_design.core_wars.utils.Map;
 import com.archangel_design.core_wars.utils.MapLoader;
 import com.archangel_design.core_wars.utils.bugs.BugLoader;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.swing.text.html.ImageView;
 import java.io.IOException;
@@ -38,6 +37,12 @@ public class MainWindowController implements CoreWarsController {
     @FXML
     ListView<String> mapList;
 
+    @FXML
+    TextField mapWidthBox;
+
+    @FXML
+    TextField mapHeightBox;
+
     HashMap<String, String> bugRepository;
 
     MainWindowModel model;
@@ -45,6 +50,8 @@ public class MainWindowController implements CoreWarsController {
     Stage parentStage;
 
     Stage simulationWindow = new Stage();
+
+    SimulationWindowModel simulationModel = null;
 
     private void updateStatusText(String text) {
         statusText.setText(text);
@@ -89,6 +96,7 @@ public class MainWindowController implements CoreWarsController {
 
     public void onSaveMapClicked() {
         model.saveMap(parentStage);
+        loadMapList();
     }
 
     public void onLoadMapClicked() {
@@ -98,7 +106,6 @@ public class MainWindowController implements CoreWarsController {
 
     public void onShow() {
         bugList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        model.redrawMap(mapCanvas.getGraphicsContext2D());
         loadBugList();
         loadMapList();
         bugList.getSelectionModel().selectedItemProperty().addListener(
@@ -113,9 +120,24 @@ public class MainWindowController implements CoreWarsController {
                 bugRepository.entrySet().stream().findFirst().get().getValue()
         );
         model.redrawMap(mapCanvas.getGraphicsContext2D());
+
+        updateDimetionBoxes();
+        mapWidthBox.textProperty().addListener(
+                (observable, oldValue, newValue) -> onMapWidthChange(newValue)
+        );
+
+        mapHeightBox.textProperty().addListener(
+                (observable, oldValue, newValue) -> onMapHeightChange(newValue)
+        );
+    }
+
+    private void updateDimetionBoxes() {
+        mapWidthBox.setText(model.getCurrentMap().getWidth().toString());
+        mapHeightBox.setText(model.getCurrentMap().getHeight().toString());
     }
 
     private void loadMapList() {
+        mapList.getItems().clear();
         mapList.getItems().addAll(MapLoader.getMapList());
     }
 
@@ -130,18 +152,52 @@ public class MainWindowController implements CoreWarsController {
             return;
 
         try {
+            model.clearMap(mapCanvas.getGraphicsContext2D());
             model.loadMap(MapLoader.loadMap(MapLoader.getFullPath(selectedMap)));
         } catch (IOException e) {
             Alerts.errorBox("Couldn't load map " + selectedMap);
             return;
         }
         model.redrawMap(mapCanvas.getGraphicsContext2D());
+        updateDimetionBoxes();
+    }
+
+    void onMapWidthChange(String newWidth) {
+        if (newWidth.isEmpty())
+            return;
+        int w = Integer.parseInt(newWidth);
+        if (!model.getCurrentMap().getWidth().equals(w)) {
+            int currentHeight = model.getCurrentMap().getHeight();
+            Map m = new Map(w, currentHeight);
+            model.loadMap(m);
+            model.redrawMap(mapCanvas.getGraphicsContext2D());
+        }
+    }
+
+    void onMapHeightChange(String newHeight) {
+        if (newHeight.isEmpty())
+            return;
+        int h = Integer.parseInt(newHeight);
+        if (!model.getCurrentMap().getHeight().equals(h)) {
+            int currentWidtth = model.getCurrentMap().getWidth();
+            Map m = new Map(currentWidtth, h);
+            model.loadMap(m);
+            model.redrawMap(mapCanvas.getGraphicsContext2D());
+        }
     }
 
     public void onStartSimulationClicked() {
-        simulationWindow.initOwner(parentStage);
-        simulationWindow.initModality(Modality.WINDOW_MODAL);
-        simulationWindow.setScene(new SimulationWindowModel().getScene(parentStage));
+        if (simulationModel == null) {
+            simulationModel = new SimulationWindowModel();
+            simulationWindow.initOwner(parentStage);
+            simulationWindow.initModality(Modality.WINDOW_MODAL);
+            simulationWindow.setScene(simulationModel.getScene(parentStage));
+            simulationWindow.addEventFilter(
+                    WindowEvent.WINDOW_SHOWN,
+                    event -> simulationModel.getMainController().onShow()
+            );
+        }
+        simulationModel.setMap(model.getCurrentMap());
         simulationWindow.showAndWait();
     }
 

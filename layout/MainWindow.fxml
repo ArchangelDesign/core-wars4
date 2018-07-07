@@ -76,6 +76,8 @@
                </image>
             </ImageView>
           <Button mnemonicParsing="false" onAction="#onEmptyClicked" text="EMPTY" />
+            <TextField fx:id="mapWidthBox" prefWidth="50.0" />
+            <TextField fx:id="mapHeightBox" prefWidth="50.0" />
             <Separator orientation="VERTICAL" prefHeight="30.0" />
             <Button mnemonicParsing="false" onAction="#onStartSimulationClicked" text="Start Simulation" />
         </items>
