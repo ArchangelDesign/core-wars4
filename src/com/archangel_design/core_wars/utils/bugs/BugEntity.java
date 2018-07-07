@@ -1,5 +1,9 @@
 package com.archangel_design.core_wars.utils.bugs;
 
+import com.archangel_design.core_wars.utils.compiler.Compiler;
+import com.archangel_design.core_wars.utils.compiler.Stack;
+import com.archangel_design.core_wars.utils.compiler.exception.MethodRedeclaredException;
+
 public class BugEntity {
 
     private String name;
@@ -11,6 +15,8 @@ public class BugEntity {
     private int y;
 
     private Direction direction = Direction.UP;
+
+    private Compiler compiler = new Compiler();
 
     public String getName() {
         return name;
@@ -63,5 +69,17 @@ public class BugEntity {
 
     public int getRealY(int size) {
         return (y - 1) * size;
+    }
+
+    public void addMethod(String name, Stack stack) {
+        try {
+            compiler.addMethod(name, stack);
+        } catch (MethodRedeclaredException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public int getMethodCount() {
+        return compiler.getMethods().size();
     }
 }

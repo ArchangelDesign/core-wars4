@@ -8,6 +8,7 @@ import com.archangel_design.core_wars.utils.SoundPlayer;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.BugLoader;
 import com.archangel_design.core_wars.utils.compiler.Parser;
+import com.archangel_design.core_wars.utils.compiler.Stack;
 import javafx.fxml.FXML;
 import javafx.geometry.Dimension2D;
 import javafx.scene.canvas.Canvas;
@@ -121,6 +122,11 @@ public class SimulationWindowController implements CoreWarsController {
 
     private void compileBugs() {
         conPrint("Compiling bugs...");
-        bugs.forEach((s, bugEntity) -> Parser.loadMethods(bugEntity.getPath()));
+        bugs.forEach((bugName, bugEntity) -> {
+                    Parser.loadMethods(bugEntity.getPath()).forEach(
+                            (name, body) -> bugEntity.addMethod(name, Parser.readStack(body)));
+                    conPrint(String.format("loaded %d functions for %s.", bugEntity.getMethodCount(), bugName));
+                }
+        );
     }
 }

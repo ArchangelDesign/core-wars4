@@ -1,7 +1,8 @@
 
 function onStart() {
 
-    someMethor;
+    someMethod();
+    anotherMethod ();
 }
 
 function loop() {
