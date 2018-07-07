@@ -17,4 +17,13 @@ public class BugLoader {
 
         return result;
     }
+
+    public static BugEntity loadBug(String name) {
+        File f = new File(BUG_FOLDER + name);
+        BugEntity bug = new BugEntity();
+        bug.setPath(f.getAbsolutePath())
+                .setName(name);
+
+        return bug;
+    }
 }

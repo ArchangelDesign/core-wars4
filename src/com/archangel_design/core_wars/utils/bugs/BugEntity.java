@@ -10,7 +10,7 @@ public class BugEntity {
 
     private int y;
 
-    private Direction direction;
+    private Direction direction = Direction.UP;
 
     public String getName() {
         return name;
@@ -55,5 +55,13 @@ public class BugEntity {
     public BugEntity setDirection(Direction direction) {
         this.direction = direction;
         return this;
+    }
+
+    public int getRealX(int size) {
+        return (x - 1) * size;
+    }
+
+    public int getRealY(int size) {
+        return (y - 1) * size;
     }
 }

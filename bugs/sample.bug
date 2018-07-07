@@ -1,3 +1,10 @@
 
 function onStart() {
+
+}
+
+function loop() {
+moveForward();
+scanForward();
+
 }

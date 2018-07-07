@@ -1,6 +1,10 @@
 package com.archangel_design.core_wars.utils;
 
+import javafx.geometry.Dimension2D;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Map {
 
@@ -75,5 +79,17 @@ public class Map {
         ));
 
         return portalCount;
+    }
+
+    public List<Dimension2D> getPortals() {
+        List<Dimension2D> result = new ArrayList<>();
+        rows.forEach((y, row) -> row.forEach(
+                (x, cell) -> {
+                    if (cell.getType().equals(CellType.PORTAL))
+                        result.add(new Dimension2D(cell.getX(), cell.getY()));
+                }
+        ));
+
+        return result;
     }
 }

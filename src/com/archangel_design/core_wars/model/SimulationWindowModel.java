@@ -7,14 +7,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class SimulationWindowModel extends AbstractModel {
 
     private Map currentMap;
+
+    private List<String> bugList;
 
     private SimulationWindowController mainController;
 
@@ -44,5 +46,13 @@ public class SimulationWindowModel extends AbstractModel {
 
     public SimulationWindowController getMainController() {
         return mainController;
+    }
+
+    public void setBugList(List<String> bugList) {
+        this.bugList = bugList;
+    }
+
+    public List<String> getBugList() {
+        return bugList;
     }
 }

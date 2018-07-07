@@ -44,14 +44,6 @@ public class MainWindowModel extends AbstractModel {
 
     public void redrawMap(GraphicsContext gc) {
         mapRenderer.redrawMap(gc, currentMap);
-        bugs.forEach(b -> mapRenderer.drawBug(
-                currentMap.getCell(b.getX(), b.getY()).getRealPositionX(30),
-                currentMap.getCell(b.getX(), b.getY()).getRealPositionY(30),
-                1,
-                30,
-                b.getDirection(),
-                gc
-        ));
     }
 
     @Override

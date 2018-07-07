@@ -18,7 +18,6 @@ import javafx.stage.WindowEvent;
 
 import javax.swing.text.html.ImageView;
 import java.io.IOException;
-import java.util.HashMap;
 
 public class MainWindowController implements CoreWarsController {
 
@@ -42,8 +41,6 @@ public class MainWindowController implements CoreWarsController {
 
     @FXML
     TextField mapHeightBox;
-
-    HashMap<String, String> bugRepository;
 
     MainWindowModel model;
 
@@ -106,8 +103,8 @@ public class MainWindowController implements CoreWarsController {
 
     public void onShow() {
         bugList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        loadBugList();
         loadMapList();
+        loadBugs();
         bugList.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> onBugSelected()
         );
@@ -115,13 +112,9 @@ public class MainWindowController implements CoreWarsController {
                 (observable, oldValue, newValue) -> onMapSelected(newValue)
         );
 
-        model.addBug(1, 1,
-                bugRepository.entrySet().stream().findFirst().get().getKey(),
-                bugRepository.entrySet().stream().findFirst().get().getValue()
-        );
         model.redrawMap(mapCanvas.getGraphicsContext2D());
 
-        updateDimetionBoxes();
+        updateDimensionBoxes();
         mapWidthBox.textProperty().addListener(
                 (observable, oldValue, newValue) -> onMapWidthChange(newValue)
         );
@@ -131,7 +124,11 @@ public class MainWindowController implements CoreWarsController {
         );
     }
 
-    private void updateDimetionBoxes() {
+    private void loadBugs() {
+        BugLoader.loadBugs().forEach((s, s2) -> bugList.getItems().add(s));
+    }
+
+    private void updateDimensionBoxes() {
         mapWidthBox.setText(model.getCurrentMap().getWidth().toString());
         mapHeightBox.setText(model.getCurrentMap().getHeight().toString());
     }
@@ -145,6 +142,7 @@ public class MainWindowController implements CoreWarsController {
         int bugCount = bugList.getSelectionModel().getSelectedItems().size();
         if (bugCount > model.getPortalCount())
             Alerts.errorBox("The map does not support selected amount of bugs. You need to add more portals.");
+
     }
 
     public void onMapSelected(String selectedMap) {
@@ -159,7 +157,7 @@ public class MainWindowController implements CoreWarsController {
             return;
         }
         model.redrawMap(mapCanvas.getGraphicsContext2D());
-        updateDimetionBoxes();
+        updateDimensionBoxes();
     }
 
     void onMapWidthChange(String newWidth) {
@@ -179,8 +177,8 @@ public class MainWindowController implements CoreWarsController {
             return;
         int h = Integer.parseInt(newHeight);
         if (!model.getCurrentMap().getHeight().equals(h)) {
-            int currentWidtth = model.getCurrentMap().getWidth();
-            Map m = new Map(currentWidtth, h);
+            int currentWidth = model.getCurrentMap().getWidth();
+            Map m = new Map(currentWidth, h);
             model.loadMap(m);
             model.redrawMap(mapCanvas.getGraphicsContext2D());
         }
@@ -198,13 +196,7 @@ public class MainWindowController implements CoreWarsController {
             );
         }
         simulationModel.setMap(model.getCurrentMap());
+        simulationModel.setBugList(bugList.getItems());
         simulationWindow.showAndWait();
-    }
-
-    public void loadBugList() {
-        bugRepository = BugLoader.loadBugs();
-        bugRepository.forEach(
-                (key, value) -> bugList.getItems().add(key)
-        );
     }
 }

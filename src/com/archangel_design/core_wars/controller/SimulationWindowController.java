@@ -4,10 +4,16 @@ import com.archangel_design.core_wars.model.AbstractModel;
 import com.archangel_design.core_wars.model.SimulationWindowModel;
 import com.archangel_design.core_wars.utils.Alerts;
 import com.archangel_design.core_wars.utils.MapRenderer;
+import com.archangel_design.core_wars.utils.bugs.BugEntity;
+import com.archangel_design.core_wars.utils.bugs.BugLoader;
 import javafx.fxml.FXML;
+import javafx.geometry.Dimension2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class SimulationWindowController implements CoreWarsController {
 
@@ -20,6 +26,10 @@ public class SimulationWindowController implements CoreWarsController {
 
     MapRenderer mapRenderer = new MapRenderer();
 
+    HashMap<String, BugEntity> bugs;
+
+    private int currentPortal;
+
     @FXML
     Canvas mapCanvas;
 
@@ -28,6 +38,8 @@ public class SimulationWindowController implements CoreWarsController {
         mapCanvas.getGraphicsContext2D().clearRect(0, 0, 600, 600);
         conPrint("Starting...");
         loadMap();
+        loadBugs();
+        conPrint("Ready for simulation.");
     }
 
     @Override
@@ -52,5 +64,35 @@ public class SimulationWindowController implements CoreWarsController {
                 model.getCurrentMap().getHeight())
         );
         mapRenderer.drawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
+    }
+
+    private void loadBugs() {
+        conPrint(String.format("loading %d bugs...", model.getBugList().size()));
+        bugs = new HashMap<>();
+
+        model.getBugList().forEach(
+                b -> {
+                    conPrint(String.format("loading %s ...", b.toString()));
+                    BugEntity bug = BugLoader.loadBug(b.toString());
+                    bugs.put(bug.getName(), bug);
+                }
+        );
+
+        List<Dimension2D> portals = model.getCurrentMap().getPortals();
+
+        conPrint("placing bugs on map...");
+
+        currentPortal = 1;
+
+        bugs.forEach((s, bugEntity) -> {
+            int x = (int) portals.get(currentPortal).getWidth();
+            int y = (int) portals.get(currentPortal).getHeight();
+            conPrint(String.format("placing %s on %dx%d", s, x, y));
+            bugEntity.setX(x)
+                    .setY(y);
+            currentPortal++;
+        });
+
+        mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
     }
 }

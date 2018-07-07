@@ -1,5 +1,6 @@
 package com.archangel_design.core_wars.utils;
 
+import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.Direction;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -36,6 +37,17 @@ public class MapRenderer {
                 drawCell(cell, context);
             }
         }
+    }
+
+    public void drawBugs(HashMap<String, BugEntity> bugs, GraphicsContext gc) {
+        bugs.forEach((s, bugEntity) -> drawBug(
+                bugEntity.getRealX(30),
+                bugEntity.getRealY(30),
+                1,
+                30,
+                bugEntity.getDirection(),
+                gc
+        ));
     }
 
     private void drawCell(Cell cell, GraphicsContext context) {
