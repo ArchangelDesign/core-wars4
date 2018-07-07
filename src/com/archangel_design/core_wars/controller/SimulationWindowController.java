@@ -2,8 +2,9 @@ package com.archangel_design.core_wars.controller;
 
 import com.archangel_design.core_wars.model.AbstractModel;
 import com.archangel_design.core_wars.model.SimulationWindowModel;
-import com.archangel_design.core_wars.utils.Alerts;
 import com.archangel_design.core_wars.utils.MapRenderer;
+import com.archangel_design.core_wars.utils.Sound;
+import com.archangel_design.core_wars.utils.SoundPlayer;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.BugLoader;
 import javafx.fxml.FXML;
@@ -40,6 +41,26 @@ public class SimulationWindowController implements CoreWarsController {
         loadMap();
         loadBugs();
         conPrint("Ready for simulation.");
+        SoundPlayer.playSound(Sound.SND_OPENING);
+        SoundPlayer.playAmbience(Sound.AMB_NATURE);
+        new Thread(() -> {
+            try {
+                Thread.sleep(2300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            startSimulation();
+        }).start();
+    }
+
+    @Override
+    public void onClose() {
+        SoundPlayer.stopAmbience();
+    }
+
+    private void startSimulation() {
+        conPrint("Staring simulation...");
+        SoundPlayer.playSound(Sound.SND_BUZZER);
     }
 
     @Override

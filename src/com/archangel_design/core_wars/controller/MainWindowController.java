@@ -124,6 +124,11 @@ public class MainWindowController implements CoreWarsController {
         );
     }
 
+    @Override
+    public void onClose() {
+
+    }
+
     private void loadBugs() {
         BugLoader.loadBugs().forEach((s, s2) -> bugList.getItems().add(s));
     }
@@ -193,6 +198,10 @@ public class MainWindowController implements CoreWarsController {
             simulationWindow.addEventFilter(
                     WindowEvent.WINDOW_SHOWN,
                     event -> simulationModel.getMainController().onShow()
+            );
+            simulationWindow.addEventHandler(
+                    WindowEvent.WINDOW_CLOSE_REQUEST,
+                    event -> simulationModel.getMainController().onClose()
             );
         }
         simulationModel.setMap(model.getCurrentMap());

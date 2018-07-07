@@ -6,6 +6,7 @@ import javafx.stage.Stage;
 public interface CoreWarsController {
 
     void onShow();
+    void onClose();
     void setModel(AbstractModel model);
     void setParentStage(Stage parentStage);
 }
