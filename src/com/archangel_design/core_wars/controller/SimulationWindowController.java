@@ -34,7 +34,7 @@ public class SimulationWindowController implements CoreWarsController {
 
     HashMap<String, BugEntity> bugs;
 
-    private long maxCycles = 4;
+    private long maxCycles = 30;
 
     private long cycles = 0;
 
@@ -69,14 +69,17 @@ public class SimulationWindowController implements CoreWarsController {
     @Override
     public void onClose() {
         SoundPlayer.stopAmbience();
+        running = false;
     }
 
     private void startSimulation() {
         conPrint("Staring simulation...");
+        running = true;
         Executor.setConsole(console);
         SoundPlayer.playSound(Sound.SND_BUZZER);
+        new Thread(() -> sceneUpdate()).start();
 
-        while (running && cycles < maxCycles) {
+        while (running) {
             bugs.forEach((s, bugEntity) -> {
                 try {
                     Executor.executeNextInstruction(bugEntity);
@@ -84,21 +87,36 @@ public class SimulationWindowController implements CoreWarsController {
                     conPrint("ERROR: " + e.getMessage());
                 }
                 cycles++;
-
-                Platform.runLater(() -> {
-                    mapRenderer.redrawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
-                    mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
-                });
+                
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             });
+
+            if (cycles > maxCycles) {
+                running = false;
+                conPrint("Simulation terminated due to reach of max cycles.");
+            }
         }
 
         conPrint("Simulation ended.");
 
+    }
+
+    private void sceneUpdate() {
+        while (running) {
+            Platform.runLater(() -> {
+                mapRenderer.redrawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
+                mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
+            });
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

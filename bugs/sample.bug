@@ -9,8 +9,6 @@ function loop() {
     scanForward();
     turnLeft();
     move();
-    if_($detected == BARRIER)
-        turnLeft();
-    endif;
-
+    move();
+    move();
 }

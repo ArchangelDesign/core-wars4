@@ -48,6 +48,21 @@ public class Executor {
 
     private static void move(BugEntity bug) {
         SoundPlayer.playSound(Sound.SND_MOVE);
+        switch (bug.getDirection()) {
+            case LEFT:
+                bug.setX(bug.getX()-1);
+                break;
+            case DOWN:
+                conPrint("moving down ");
+                bug.setY(bug.getY()+1);
+                break;
+            case UP:
+                bug.setY(bug.getY()-1);
+                break;
+            case RIGHT:
+                bug.setX(bug.getX()+1);
+                break;
+        }
     }
 
     private static void turnLeft(BugEntity bug) {
