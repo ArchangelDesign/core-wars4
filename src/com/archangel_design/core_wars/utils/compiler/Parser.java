@@ -41,7 +41,7 @@ public class Parser {
         );
 
         matches.forEach(s -> {
-            String name = getAllMatches("(?<=function) [a-zA-Z]*(?=\\()", s).stream().findFirst().orElse("");
+            String name = getAllMatches("(?<=function )[a-zA-Z]*(?=\\()", s).stream().findFirst().orElse("");
             String body = getAllMatches("(?<=\\{).*(?=\\})", s).stream().findFirst().orElse("");
             if (result.containsKey(name))
                 throw new RuntimeException(String.format("Method %s already exists. Cannot redeclare.", name));
@@ -74,7 +74,7 @@ public class Parser {
     }
 
     private static void addConditionStart(String rawLine, Stack stack) {
-        stack.addInstruction(new Instruction("", new HashMap<>(), InstructionType.CONDITION_START));
+        stack.addInstruction(new Instruction(getConditionArguments(rawLine)));
     }
 
     private static void addConditionStop(String rawLine, Stack stack) {

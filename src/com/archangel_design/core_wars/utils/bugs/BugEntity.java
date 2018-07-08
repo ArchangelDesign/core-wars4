@@ -19,7 +19,7 @@ public class BugEntity {
     private Compiler compiler = new Compiler();
 
     public String getName() {
-        return name;
+        return name.replace(".bug", "");
     }
 
     public BugEntity setName(String name) {
@@ -81,5 +81,9 @@ public class BugEntity {
 
     public int getMethodCount() {
         return compiler.getMethods().size();
+    }
+
+    public Compiler getCompiler() {
+        return compiler;
     }
 }

@@ -7,6 +7,8 @@ function onStart() {
 
 function loop() {
     scanForward();
+    turnLeft();
+    move();
     if_($detected == BARRIER)
         turnLeft();
     endif;

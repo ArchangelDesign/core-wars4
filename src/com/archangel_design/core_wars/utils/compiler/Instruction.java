@@ -31,4 +31,20 @@ public class Instruction {
         this.type = InstructionType.CONDITION_START;
         this.conditionArgument = conditionArgument;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public HashMap<String, String> getArguments() {
+        return arguments;
+    }
+
+    public ConditionArgument getConditionArgument() {
+        return conditionArgument;
+    }
+
+    public InstructionType getType() {
+        return type;
+    }
 }

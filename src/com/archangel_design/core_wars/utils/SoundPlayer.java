@@ -13,6 +13,10 @@ public class SoundPlayer {
                 break;
             case SND_BUZZER:
                 Assets.getAudio("buzzer.mp3").play();
+                break;
+            case SND_MOVE:
+                Assets.getAudio("move.mp3").play();
+                break;
         }
     }
 

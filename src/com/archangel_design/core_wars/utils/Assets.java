@@ -34,6 +34,7 @@ public class Assets {
         params.setFill(Color.TRANSPARENT);
         return iv.snapshot(params, null);
     }
+
     public static AudioClip getAudio(String fileName) {
         File f = new File("assets/sounds/" + fileName);
         return new AudioClip(f.toURI().toString());
