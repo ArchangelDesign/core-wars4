@@ -128,5 +128,6 @@ public class SimulationWindowController implements CoreWarsController {
                     conPrint(String.format("loaded %d functions for %s.", bugEntity.getMethodCount(), bugName));
                 }
         );
+        conPrint("bugs compiled.");
     }
 }

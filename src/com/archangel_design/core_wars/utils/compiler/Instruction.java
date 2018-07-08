@@ -7,7 +7,9 @@ public class Instruction {
 
     private HashMap<String, String> arguments;
 
-    private InstructionType type;
+    private ConditionArgument conditionArgument;
+
+    private InstructionType type = InstructionType.METHOD_CALL;
 
     public Instruction(String name) {
         this.name = name;
@@ -22,5 +24,11 @@ public class Instruction {
         this.name = name;
         this.arguments = arguments;
         this.type = instructionType;
+    }
+
+    public Instruction(ConditionArgument conditionArgument) {
+        this.name = "";
+        this.type = InstructionType.CONDITION_START;
+        this.conditionArgument = conditionArgument;
     }
 }

@@ -1,12 +1,14 @@
 
 function onStart() {
 
-    someMethod();
+    someMethod($myVariable);
     anotherMethod ();
 }
 
 function loop() {
-moveForward();
-scanForward();
+    scanForward();
+    if_($detected == BARRIER)
+        turnLeft();
+    endif;
 
 }

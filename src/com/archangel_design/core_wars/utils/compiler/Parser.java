@@ -17,6 +17,10 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 
+    private static final String REGEX_METHOD_CALL = "[a-zA-Z]*[ ]*\\([^\\).]*\\)[ ]*;";
+    private static final String REGEX_CONDITION_CALL = "if_\\([^\\).]*\\)";
+    private static final String REGEX_CONDITION_END_CALL = "endif;";
+
     /**
      * Parses given source file and returns a map where
      * key is a method's name and a value is a full body
@@ -46,19 +50,90 @@ public class Parser {
         return result;
     }
 
+    /**
+     * Returns stack for the parsed method from the source code
+     *
+     * @param body parsed method string
+     * @return method's stack
+     */
     public static Stack readStack(String body) {
         Stack result = new Stack();
-        List<String> methodCalls = getAllMatches("[a-zA-Z]*[ ]*\\([^\\).]*\\)[ ]*;", body);
+        List<String> lines = getAllMatches("[^\\n.]*\\n", body);
 
-        methodCalls.forEach(s -> {
-            Instruction i = new Instruction(getMethodName(s));
-            result.addInstruction(i);
-        });
+        for (int index = 0; index < lines.size(); index++) {
+            String line = lines.get(index);
+            if (isMethodCall(line))
+                addMethod(line, result);
+            else if (isConditionalStartCall(line))
+                addConditionStart(line, result);
+            else if (isConditionalEndCall(line))
+                addConditionStop(line, result);
+        }
+
         return result;
     }
 
+    private static void addConditionStart(String rawLine, Stack stack) {
+        stack.addInstruction(new Instruction("", new HashMap<>(), InstructionType.CONDITION_START));
+    }
+
+    private static void addConditionStop(String rawLine, Stack stack) {
+        stack.addInstruction(new Instruction("", new HashMap<>(), InstructionType.CONDITION_END));
+    }
+
+    private static void addMethod(String rawLine, Stack stack) {
+        stack.addInstruction(
+                new Instruction(
+                        getMethodName(rawLine),
+                        getMethodArguments(rawLine))
+        );
+    }
+
+    public static boolean isMethodCall(String line) {
+        return getAllMatches(REGEX_METHOD_CALL, line).size() > 0;
+    }
+
+    public static boolean isConditionalStartCall(String line) {
+        return getAllMatches(REGEX_CONDITION_CALL, line).size() > 0;
+    }
+
+    public static boolean isConditionalEndCall(String line) {
+        return getAllMatches(REGEX_CONDITION_END_CALL, line).size() > 0;
+    }
+
+    /**
+     * Returns method name extracted from the method call
+     *
+     * @param parsedCall method call string
+     * @return method name
+     */
     public static String getMethodName(String parsedCall) {
-        return getAllMatches("[a-zA-Z]*(?= *?)", parsedCall).stream().findFirst().orElse("");
+        return getAllMatches("[a-zA-Z]*(?=([ ]{0,10}\\())", parsedCall)
+                .stream().findFirst().orElse("");
+    }
+
+    public static ConditionArgument getConditionArguments(String rawLine) {
+        String innerPart = getAllMatches("(?<=\\()[^\\).]*(?=\\))", rawLine).stream().findFirst().orElse("");
+
+        if (innerPart.isEmpty())
+            return null;
+
+        String firstArg = getAllMatches("[a-zA-Z\\$]*(?=[ \\=\\>\\<])", innerPart).stream().findFirst().orElse("");
+        String secondArg = getAllMatches("(?<=[\\= \\<\\>]{1,100})[a-zA-Z\\$]{1,100}", innerPart).stream().findFirst().orElse("");
+        String operator = getAllMatches("(?<=[a-zA-Z ]{1,100})[\\=\\>\\<]{1,}(?=[a-zA-Z \\$]{1,100})", innerPart).stream().findFirst().orElse("");
+
+        return new ConditionArgument(firstArg, secondArg, operator);
+    }
+
+    public static HashMap<String, String> getMethodArguments(String parsedCall) {
+        HashMap<String, String> result = new HashMap<>();
+        getAllMatches("(?<=([a-zA-Z]{2,100}[ ]{0,100}\\())[^\\).]*(?=\\))", parsedCall)
+        .forEach(s -> {
+            if (!s.isEmpty())
+                result.put(s, null);
+        });
+
+        return result;
     }
 
     /**
