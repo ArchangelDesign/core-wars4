@@ -10,12 +10,20 @@ import javafx.scene.paint.Color;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 public class Assets {
+
+    private static HashMap<String, Image> buffer = new HashMap<>();
+
     public static Image getImage(String name) {
         try {
             URL url = new File("assets/" + name).toURI().toURL();
-            return new Image(url.toString());
+            if (buffer.containsKey(url.toString()))
+                return buffer.get(url.toString());
+
+            buffer.put(url.toString(), new Image(url.toString()));
+            return buffer.get(url.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }

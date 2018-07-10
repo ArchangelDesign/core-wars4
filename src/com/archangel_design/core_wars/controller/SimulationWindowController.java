@@ -76,6 +76,7 @@ public class SimulationWindowController implements CoreWarsController {
         conPrint("Staring simulation...");
         running = true;
         Executor.setConsole(console);
+        Executor.setCurrentMap(model.getCurrentMap());
         SoundPlayer.playSound(Sound.SND_BUZZER);
         new Thread(() -> sceneUpdate()).start();
 
@@ -86,14 +87,15 @@ public class SimulationWindowController implements CoreWarsController {
                 } catch (NoLoopMethodException e) {
                     conPrint("ERROR: " + e.getMessage());
                 }
-                cycles++;
-                
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             });
+
+            cycles++;
+
+            try {
+                Thread.sleep(700);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             if (cycles > maxCycles) {
                 running = false;
@@ -159,7 +161,7 @@ public class SimulationWindowController implements CoreWarsController {
 
         conPrint("placing bugs on map...");
 
-        currentPortal = 1;
+        currentPortal = 0;
 
         bugs.forEach((s, bugEntity) -> {
             int x = (int) portals.get(currentPortal).getWidth();

@@ -14,6 +14,8 @@ public class BugEntity {
 
     private int y;
 
+    private boolean alive = true;
+
     private Direction direction = Direction.UP;
 
     private Compiler compiler = new Compiler();
@@ -85,5 +87,13 @@ public class BugEntity {
 
     public Compiler getCompiler() {
         return compiler;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void kill() {
+        alive = false;
     }
 }

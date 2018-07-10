@@ -1,10 +1,10 @@
 package com.archangel_design.core_wars.utils.compiler;
 
-import com.archangel_design.core_wars.utils.Sound;
-import com.archangel_design.core_wars.utils.SoundPlayer;
+import com.archangel_design.core_wars.utils.*;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.Direction;
 import com.archangel_design.core_wars.utils.compiler.exception.NoLoopMethodException;
+import com.sun.istack.internal.NotNull;
 import javafx.scene.control.TextArea;
 
 import java.util.HashMap;
@@ -13,6 +13,7 @@ public class Executor {
 
     public static boolean debugMode = true;
     private static TextArea console;
+    private static Map currentMap;
 
     public static void setDebugMode(boolean debugMode) {
         Executor.debugMode = debugMode;
@@ -20,6 +21,10 @@ public class Executor {
 
     public static void setConsole(TextArea console) {
         Executor.console = console;
+    }
+
+    public static void setCurrentMap(@NotNull Map map) {
+        currentMap = map;
     }
 
     public static void executeNextInstruction(BugEntity bug) throws NoLoopMethodException {
@@ -43,6 +48,21 @@ public class Executor {
             case "turnLeft":
                 turnLeft(bug);
                 break;
+            case "turnRight":
+                turnRight(bug);
+                break;
+            case "scanForward":
+                break;
+            case "scanLeft":
+                break;
+            case "scanRight":
+                break;
+            case "scanBack":
+                break;
+            case "shoot":
+                break;
+            case "sendNoise":
+                break;
         }
     }
 
@@ -50,23 +70,102 @@ public class Executor {
         SoundPlayer.playSound(Sound.SND_MOVE);
         switch (bug.getDirection()) {
             case LEFT:
-                bug.setX(bug.getX()-1);
+                if (!canMoveLeft(bug)) {
+                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    return;
+                }
+                bug.setX(bug.getX() - 1);
+                conPrint(String.format("[%s] is moving left to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
             case DOWN:
-                conPrint("moving down ");
-                bug.setY(bug.getY()+1);
+                if (!canMoveDown(bug)) {
+                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    return;
+                }
+                bug.setY(bug.getY() + 1);
+                conPrint(String.format("[%s] is moving down to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
             case UP:
-                bug.setY(bug.getY()-1);
+                if (!canMoveUp(bug)) {
+                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    return;
+                }
+                bug.setY(bug.getY() - 1);
+                conPrint(String.format("[%s] is moving up to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
             case RIGHT:
-                bug.setX(bug.getX()+1);
+                if (!canMoveRight(bug)) {
+                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    return;
+                }
+                bug.setX(bug.getX() + 1);
+                conPrint(String.format("[%s] is moving right to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
         }
     }
 
+    private static boolean canMoveUp(BugEntity bug) {
+        int x = bug.getX();
+        int y = bug.getY() - 1;
+
+        if (y < 1)
+            return false;
+
+        Cell c = currentMap.getCell(x, y);
+
+        if (c.getType() == CellType.BARRIER)
+            return false;
+
+        return true;
+    }
+
+    private static boolean canMoveDown(BugEntity bug) {
+        int x = bug.getX();
+        int y = bug.getY() + 1;
+
+        if (y > currentMap.getHeight())
+            return false;
+
+        Cell c = currentMap.getCell(x, y);
+
+        if (c.getType() == CellType.BARRIER)
+            return false;
+
+        return true;
+    }
+
+    private static boolean canMoveLeft(BugEntity bug) {
+        int x = bug.getX() - 1;
+        int y = bug.getY();
+
+        if (x == 1)
+            return false;
+
+        Cell c = currentMap.getCell(x, y);
+
+        if (c.getType() == CellType.BARRIER)
+            return false;
+
+        return true;
+    }
+
+    private static boolean canMoveRight(BugEntity bug) {
+        int x = bug.getX() + 1;
+        int y = bug.getY();
+
+        if (x > currentMap.getWidth())
+            return false;
+
+        Cell c = currentMap.getCell(x, y);
+
+        if (c.getType() == CellType.BARRIER)
+            return false;
+
+        return true;
+    }
+
     private static void turnLeft(BugEntity bug) {
-        conPrint(String.format("bug %s is turning left.", bug.getName()));
+        conPrint(String.format("[%s] is turning left.", bug.getName()));
         switch (bug.getDirection()) {
             case LEFT:
                 bug.setDirection(Direction.DOWN);
@@ -79,6 +178,24 @@ public class Executor {
                 break;
             case DOWN:
                 bug.setDirection(Direction.RIGHT);
+                break;
+        }
+    }
+
+    private static void turnRight(BugEntity bug) {
+        conPrint(String.format("[%s] is turning right.", bug.getName()));
+        switch (bug.getDirection()) {
+            case LEFT:
+                bug.setDirection(Direction.UP);
+                break;
+            case UP:
+                bug.setDirection(Direction.RIGHT);
+                break;
+            case RIGHT:
+                bug.setDirection(Direction.DOWN);
+                break;
+            case DOWN:
+                bug.setDirection(Direction.LEFT);
                 break;
         }
     }
