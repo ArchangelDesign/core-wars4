@@ -5,7 +5,12 @@ import com.archangel_design.core_wars.utils.compiler.exception.MethodRedeclaredE
 import java.util.HashMap;
 
 public class Compiler {
+
     private HashMap<String, Stack> functions = new HashMap<>();
+
+    private HashMap<String, String> variables = new HashMap<>();
+
+    private String currentMethod = null;
 
     public void addMethod(String name, Stack functionStack) throws MethodRedeclaredException {
         if (functions.containsKey(name))
@@ -15,5 +20,21 @@ public class Compiler {
 
     public HashMap<String, Stack> getMethods() {
         return functions;
+    }
+
+    public boolean hasVariable(String variable) {
+        return variables.containsKey(variable);
+    }
+
+    public String getCurrentMethod() {
+        if (currentMethod == null)
+            // default method (entry point)
+            return "loop";
+        return currentMethod;
+    }
+
+    public Compiler setCurrentMethod(String currentMethod) {
+        this.currentMethod = currentMethod;
+        return this;
     }
 }

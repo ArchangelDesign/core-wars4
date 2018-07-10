@@ -19,6 +19,10 @@ public class Stack {
         size = instructions.size();
     }
 
+    public Instruction getCurrentInstruction() {
+        return instructions.get(currentInstruction);
+    }
+
     public Instruction getNext() {
         if (endOfStack())
             resetStack();
@@ -34,5 +38,26 @@ public class Stack {
 
     private void resetStack() {
         currentInstruction = 0;
+    }
+
+    /**
+     * Conditional instruction has been evaluated to false
+     * thus we move outside of the scope of this and any
+     * nested conditional instructions
+     */
+    public void conditionNotMet() {
+        int nestedConditions = 0;
+        for (;;) {
+            if (getCurrentInstruction().getType() == InstructionType.CONDITION_END)
+                nestedConditions--;
+
+            if (nestedConditions < 0)
+                return;
+
+            if (getCurrentInstruction().getType() == InstructionType.CONDITION_START)
+                nestedConditions++;
+
+            getNext();
+        }
     }
 }

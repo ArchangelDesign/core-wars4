@@ -29,17 +29,55 @@ public class Executor {
 
     public static void executeNextInstruction(BugEntity bug) throws NoLoopMethodException {
         HashMap<String, Stack> methods = bug.getCompiler().getMethods();
-        if (!methods.containsKey("loop"))
-            throw new NoLoopMethodException(String.format("No loop method for bug %s.", bug.getName()));
+        if (!methods.containsKey(bug.getCompiler().getCurrentMethod()))
+            throw new NoLoopMethodException(String.format("No %s method for bug %s.", bug.getCompiler().getCurrentMethod(), bug.getName()));
 
-        Instruction instruction = bug.getCompiler().getMethods().get("loop").getNext();
+        Instruction instruction = bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).getNext();
         switch (instruction.getType()) {
             case METHOD_CALL:
                 callMethod(bug, instruction);
                 break;
+            case CONDITION_START:
+                handleCondition(bug, instruction);
+                break;
         }
     }
 
+    private static void handleCondition(BugEntity bug, Instruction instruction) {
+        String arg1 = evaluateArgument(bug, instruction.getConditionArgument().getArg1());
+        String arg2 = evaluateArgument(bug, instruction.getConditionArgument().getArg2());
+        String op = instruction.getConditionArgument().getOperator();
+
+        switch (op) {
+            case "==":
+                if (arg1.equals(arg2))
+                    // follow inside
+                    return;
+                else
+                    bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).conditionNotMet();
+        }
+
+    }
+
+    private static String evaluateArgument(BugEntity bug, String argument) {
+        if (argument.contains("$"))
+            return getVariableValue(bug, argument);
+        return argument;
+    }
+
+    private static String getVariableValue(BugEntity bug, String variable) {
+        if (bug.getCompiler().hasVariable(variable)) {
+            conError(String.format("[%s] Variable %s is not defined.", bug.getName(), variable));
+        }
+        return "";
+    }
+
+    /**
+     * Calls method from bug's local stack
+     *
+     * @param bug target
+     * @param instruction current instruction
+     */
     private static void callMethod(BugEntity bug, Instruction instruction) {
         switch (instruction.getName()) {
             case "move":
@@ -206,5 +244,11 @@ public class Executor {
         if (!debugMode)
             return;
         console.appendText(msg + System.getProperty("line.separator"));
+    }
+
+    private static void conError(String msg) {
+        if (console == null)
+            throw new RuntimeException(msg);
+        console.appendText("ERROR: " + msg + System.getProperty("line.separator"));
     }
 }

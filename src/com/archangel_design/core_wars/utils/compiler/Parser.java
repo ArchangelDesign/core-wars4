@@ -118,8 +118,8 @@ public class Parser {
         if (innerPart.isEmpty())
             return null;
 
-        String firstArg = getAllMatches("[a-zA-Z\\$]*(?=[ \\=\\>\\<])", innerPart).stream().findFirst().orElse("");
-        String secondArg = getAllMatches("(?<=[\\= \\<\\>]{1,100})[a-zA-Z\\$]{1,100}", innerPart).stream().findFirst().orElse("");
+        String firstArg = getAllMatches("[a-zA-Z0-9\\$]*(?=[ \\=\\>\\<])", innerPart).stream().findFirst().orElse("");
+        String secondArg = getAllMatches("(?<=[\\= \\<\\>]{1,100})[a-zA-Z0-9\\$]{1,100}", innerPart).stream().findFirst().orElse("");
         String operator = getAllMatches("(?<=[a-zA-Z ]{1,100})[\\=\\>\\<]{1,}(?=[a-zA-Z \\$]{1,100})", innerPart).stream().findFirst().orElse("");
 
         return new ConditionArgument(firstArg, secondArg, operator);

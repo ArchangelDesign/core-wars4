@@ -6,8 +6,9 @@ function onStart() {
 }
 
 function loop() {
-    move();
-    move();
-    turnRight();
-    move();
+if_(1 == 2)
+  turnRight();
+  move();
+endif;
+
 }
