@@ -6,8 +6,13 @@ function onStart() {
 }
 
 function loop() {
-if_(1 == 2)
+scanForward();
+if_($scanResult == BARRIER)
   turnRight();
+  loop();
+endif;
+
+if_($scanResult == EMPTY)
   move();
 endif;
 

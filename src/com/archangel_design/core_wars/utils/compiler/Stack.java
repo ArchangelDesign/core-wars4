@@ -60,4 +60,8 @@ public class Stack {
             getNext();
         }
     }
+
+    public void reset() {
+        currentInstruction = 0;
+    }
 }

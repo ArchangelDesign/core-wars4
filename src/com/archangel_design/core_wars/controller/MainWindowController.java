@@ -205,7 +205,7 @@ public class MainWindowController implements CoreWarsController {
             );
         }
         simulationModel.setMap(model.getCurrentMap());
-        simulationModel.setBugList(bugList.getItems());
+        simulationModel.setBugList(bugList.getSelectionModel().getSelectedItems());
         simulationWindow.showAndWait();
     }
 }

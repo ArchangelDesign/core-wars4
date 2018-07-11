@@ -112,6 +112,13 @@ public class Parser {
                 .stream().findFirst().orElse("");
     }
 
+    /**
+     * Returns argument of the conditional statement.
+     * Currently only one is supported.
+     *
+     * @param rawLine conditional statement
+     * @return arguments
+     */
     public static ConditionArgument getConditionArguments(String rawLine) {
         String innerPart = getAllMatches("(?<=\\()[^\\).]*(?=\\))", rawLine).stream().findFirst().orElse("");
 
@@ -120,11 +127,18 @@ public class Parser {
 
         String firstArg = getAllMatches("[a-zA-Z0-9\\$]*(?=[ \\=\\>\\<])", innerPart).stream().findFirst().orElse("");
         String secondArg = getAllMatches("(?<=[\\= \\<\\>]{1,100})[a-zA-Z0-9\\$]{1,100}", innerPart).stream().findFirst().orElse("");
-        String operator = getAllMatches("(?<=[a-zA-Z ]{1,100})[\\=\\>\\<]{1,}(?=[a-zA-Z \\$]{1,100})", innerPart).stream().findFirst().orElse("");
+        String operator = getAllMatches("(?<=[a-zA-Z0-9 \\$]{1,100})[\\=\\>\\<]{1,}(?=[a-zA-Z0-9 \\$]{1,100})", innerPart).stream().findFirst().orElse("");
 
         return new ConditionArgument(firstArg, secondArg, operator);
     }
 
+    /**
+     * Returns arguments where key is a name
+     * and value is always null (to be evaluated later by compiler)
+     *
+     * @param parsedCall method call
+     * @return arguments
+     */
     public static HashMap<String, String> getMethodArguments(String parsedCall) {
         HashMap<String, String> result = new HashMap<>();
         getAllMatches("(?<=([a-zA-Z]{2,100}[ ]{0,100}\\())[^\\).]*(?=\\))", parsedCall)

@@ -66,10 +66,11 @@ public class Executor {
     }
 
     private static String getVariableValue(BugEntity bug, String variable) {
-        if (bug.getCompiler().hasVariable(variable)) {
+        if (!bug.getCompiler().hasVariable(variable)) {
             conError(String.format("[%s] Variable %s is not defined.", bug.getName(), variable));
+            return "";
         }
-        return "";
+        return bug.getCompiler().getVariableValue(variable);
     }
 
     /**
@@ -79,6 +80,10 @@ public class Executor {
      * @param instruction current instruction
      */
     private static void callMethod(BugEntity bug, Instruction instruction) {
+        if (bug.getCompiler().getMethods().containsKey(instruction.getName())) {
+            bug.getCompiler().setCurrentMethod(instruction.getName());
+            bug.getCompiler().getCurrentStack().reset();
+        }
         switch (instruction.getName()) {
             case "move":
                 move(bug);
@@ -90,6 +95,7 @@ public class Executor {
                 turnRight(bug);
                 break;
             case "scanForward":
+                scanForward(bug);
                 break;
             case "scanLeft":
                 break;
@@ -102,6 +108,42 @@ public class Executor {
             case "sendNoise":
                 break;
         }
+    }
+
+    private static void scanForward(BugEntity bug) {
+        int x = bug.getX();
+        int y = bug.getY();
+
+        switch (bug.getDirection()) {
+            case RIGHT:
+                x++; break;
+            case LEFT:
+                x--; break;
+            case UP:
+                y--; break;
+            case DOWN:
+                y++; break;
+        }
+
+        if (x > currentMap.getWidth() || x < 1 ||
+                y > currentMap.getHeight() || y < 1) {
+            bug.getCompiler().declareVariable("$scanResult", "BARRIER");
+            return;
+        }
+
+        switch (currentMap.getCell(x, y).getType()) {
+            case BARRIER:
+                bug.getCompiler().declareVariable("$scanResult", "BARRIER");
+                break;
+            case EMPTY:
+                bug.getCompiler().declareVariable("$scanResult", "EMPTY");
+                break;
+            case MINE:
+                bug.getCompiler().declareVariable("$scanResult", "MINE");
+                break;
+        }
+
+        // @TODO: detect bugs
     }
 
     private static void move(BugEntity bug) {

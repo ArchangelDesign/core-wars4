@@ -37,4 +37,16 @@ public class Compiler {
         this.currentMethod = currentMethod;
         return this;
     }
+
+    public String getVariableValue(String variableName) {
+        return variables.get(variableName);
+    }
+
+    public void declareVariable(String name, String value) {
+        variables.put(name, value);
+    }
+
+    public Stack getCurrentStack() {
+        return functions.get(getCurrentMethod());
+    }
 }
