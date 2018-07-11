@@ -6,14 +6,21 @@ function onStart() {
 }
 
 function loop() {
-scanForward();
-if_($scanResult == BARRIER)
-  turnRight();
-  loop();
-endif;
 
-if_($scanResult == EMPTY)
-  move();
-endif;
+    scanForward();
+
+    if_($scanResult == BARRIER)
+        turnRandom();
+        loop();
+    endif;
+
+    if_($scanResult == MINE)
+        turnRandom();
+        loop();
+    endif;
+
+    if_($scanResult == EMPTY)
+        move();
+    endif;
 
 }

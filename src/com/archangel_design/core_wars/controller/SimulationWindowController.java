@@ -34,7 +34,7 @@ public class SimulationWindowController implements CoreWarsController {
 
     HashMap<String, BugEntity> bugs;
 
-    private long maxCycles = 30;
+    private long maxCycles = 0;
 
     private long cycles = 0;
 
@@ -55,7 +55,6 @@ public class SimulationWindowController implements CoreWarsController {
         compileBugs();
         conPrint("Ready for simulation.");
         SoundPlayer.playSound(Sound.SND_OPENING);
-        SoundPlayer.playAmbience(Sound.AMB_NATURE);
         new Thread(() -> {
             try {
                 Thread.sleep(2300);
@@ -92,12 +91,12 @@ public class SimulationWindowController implements CoreWarsController {
             cycles++;
 
             try {
-                Thread.sleep(700);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            if (cycles > maxCycles) {
+            if (cycles > maxCycles && maxCycles > 0) {
                 running = false;
                 conPrint("Simulation terminated due to reach of max cycles.");
             }
@@ -114,7 +113,7 @@ public class SimulationWindowController implements CoreWarsController {
                 mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
             });
             try {
-                Thread.sleep(100);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

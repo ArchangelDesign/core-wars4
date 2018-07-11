@@ -8,6 +8,7 @@ import com.sun.istack.internal.NotNull;
 import javafx.scene.control.TextArea;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class Executor {
 
@@ -76,7 +77,7 @@ public class Executor {
     /**
      * Calls method from bug's local stack
      *
-     * @param bug target
+     * @param bug         target
      * @param instruction current instruction
      */
     private static void callMethod(BugEntity bug, Instruction instruction) {
@@ -94,6 +95,9 @@ public class Executor {
             case "turnRight":
                 turnRight(bug);
                 break;
+            case "turnRandom":
+                turnRandom(bug);
+                break;
             case "scanForward":
                 scanForward(bug);
                 break;
@@ -110,19 +114,31 @@ public class Executor {
         }
     }
 
+    private static void turnRandom(BugEntity bug) {
+        Random rand = new Random();
+        if (rand.nextInt(2) == 1)
+            turnLeft(bug);
+        else
+            turnRight(bug);
+    }
+
     private static void scanForward(BugEntity bug) {
         int x = bug.getX();
         int y = bug.getY();
 
         switch (bug.getDirection()) {
             case RIGHT:
-                x++; break;
+                x++;
+                break;
             case LEFT:
-                x--; break;
+                x--;
+                break;
             case UP:
-                y--; break;
+                y--;
+                break;
             case DOWN:
-                y++; break;
+                y++;
+                break;
         }
 
         if (x > currentMap.getWidth() || x < 1 ||
@@ -136,6 +152,7 @@ public class Executor {
                 bug.getCompiler().declareVariable("$scanResult", "BARRIER");
                 break;
             case EMPTY:
+            case PORTAL:
                 bug.getCompiler().declareVariable("$scanResult", "EMPTY");
                 break;
             case MINE:
@@ -218,7 +235,7 @@ public class Executor {
         int x = bug.getX() - 1;
         int y = bug.getY();
 
-        if (x == 1)
+        if (x == 0)
             return false;
 
         Cell c = currentMap.getCell(x, y);
