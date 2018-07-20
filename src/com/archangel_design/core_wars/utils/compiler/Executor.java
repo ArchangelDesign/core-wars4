@@ -68,7 +68,7 @@ public class Executor {
 
     private static String getVariableValue(BugEntity bug, String variable) {
         if (!bug.getCompiler().hasVariable(variable)) {
-            conError(String.format("[%s] Variable %s is not defined.", bug.getName(), variable));
+            Logger.error(String.format("[%s] Variable %s is not defined.", bug.getName(), variable));
             return "";
         }
         return bug.getCompiler().getVariableValue(variable);
@@ -168,35 +168,35 @@ public class Executor {
         switch (bug.getDirection()) {
             case LEFT:
                 if (!canMoveLeft(bug)) {
-                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    Logger.debug(String.format("[%s] bumps from a barrier.", bug.getName()));
                     return;
                 }
                 bug.setX(bug.getX() - 1);
-                conPrint(String.format("[%s] is moving left to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
+                Logger.debug(String.format("[%s] is moving left to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
             case DOWN:
                 if (!canMoveDown(bug)) {
-                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    Logger.debug(String.format("[%s] bumps from a barrier.", bug.getName()));
                     return;
                 }
                 bug.setY(bug.getY() + 1);
-                conPrint(String.format("[%s] is moving down to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
+                Logger.debug(String.format("[%s] is moving down to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
             case UP:
                 if (!canMoveUp(bug)) {
-                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    Logger.debug(String.format("[%s] bumps from a barrier.", bug.getName()));
                     return;
                 }
                 bug.setY(bug.getY() - 1);
-                conPrint(String.format("[%s] is moving up to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
+                Logger.debug(String.format("[%s] is moving up to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
             case RIGHT:
                 if (!canMoveRight(bug)) {
-                    conPrint(String.format("[%s] bumps from a barrier.", bug.getName()));
+                    Logger.debug(String.format("[%s] bumps from a barrier.", bug.getName()));
                     return;
                 }
                 bug.setX(bug.getX() + 1);
-                conPrint(String.format("[%s] is moving right to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
+                Logger.debug(String.format("[%s] is moving right to [%d:%d].", bug.getName(), bug.getX(), bug.getY()));
                 break;
         }
     }
@@ -262,7 +262,7 @@ public class Executor {
     }
 
     private static void turnLeft(BugEntity bug) {
-        conPrint(String.format("[%s] is turning left.", bug.getName()));
+        Logger.debug(String.format("[%s] is turning left.", bug.getName()));
         switch (bug.getDirection()) {
             case LEFT:
                 bug.setDirection(Direction.DOWN);
@@ -280,7 +280,7 @@ public class Executor {
     }
 
     private static void turnRight(BugEntity bug) {
-        conPrint(String.format("[%s] is turning right.", bug.getName()));
+        Logger.debug(String.format("[%s] is turning right.", bug.getName()));
         switch (bug.getDirection()) {
             case LEFT:
                 bug.setDirection(Direction.UP);
@@ -295,19 +295,5 @@ public class Executor {
                 bug.setDirection(Direction.LEFT);
                 break;
         }
-    }
-
-    private static void conPrint(String msg) {
-        if (console == null)
-            return;
-        if (!debugMode)
-            return;
-        console.appendText(msg + System.getProperty("line.separator"));
-    }
-
-    private static void conError(String msg) {
-        if (console == null)
-            throw new RuntimeException(msg);
-        console.appendText("ERROR: " + msg + System.getProperty("line.separator"));
     }
 }

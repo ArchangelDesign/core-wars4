@@ -31,6 +31,9 @@ public class SimulationWindowController implements CoreWarsController {
     @FXML
     Label timeLabel;
 
+    @FXML
+    Label cyclesLabel;
+
     SimulationWindowModel model;
 
     Stage parentStage;
@@ -55,11 +58,11 @@ public class SimulationWindowController implements CoreWarsController {
         cycles = 0;
         Logger.setConsole(console);
         mapCanvas.getGraphicsContext2D().clearRect(0, 0, 600, 600);
-        conPrint("Starting...");
+        Logger.info("Starting...");
         loadMap();
         loadBugs();
         compileBugs();
-        conPrint("Ready for simulation.");
+        Logger.info("Ready for simulation.");
         SoundPlayer.playSound(Sound.SND_OPENING);
         new Thread(() -> {
             try {
@@ -78,7 +81,7 @@ public class SimulationWindowController implements CoreWarsController {
     }
 
     private void startSimulation() {
-        conPrint("Staring simulation...");
+        Logger.info("Staring simulation...");
         Logger.reset();
         running = true;
         Executor.setConsole(console);
@@ -92,7 +95,7 @@ public class SimulationWindowController implements CoreWarsController {
                 try {
                     Executor.executeNextInstruction(bugEntity);
                 } catch (NoLoopMethodException e) {
-                    conPrint("ERROR: " + e.getMessage());
+                    Logger.error(e.getMessage());
                 }
             });
 
@@ -106,21 +109,23 @@ public class SimulationWindowController implements CoreWarsController {
 
             if (cycles > maxCycles && maxCycles > 0) {
                 running = false;
-                conPrint("Simulation terminated due to reach of max cycles.");
+                Logger.info("Simulation terminated due to reach of max cycles.");
             }
         }
 
-        conPrint("Simulation ended.");
+        Logger.info("Simulation ended.");
 
     }
 
     private void timeTick() {
         while (running) {
             Logger.tick();
-            Platform.runLater(() ->
-                    timeLabel.setText(
-                            String.format("Time elapsed: %d", Logger.getTime())
-                    )
+            Platform.runLater(() -> {
+                        timeLabel.setText(
+                                String.format("Time elapsed: %d", Logger.getTime())
+                        );
+                        cyclesLabel.setText(String.format("Cycles: %d", cycles));
+                    }
             );
             try {
                 Thread.sleep(1000);
@@ -159,8 +164,8 @@ public class SimulationWindowController implements CoreWarsController {
     }
 
     private void loadMap() {
-        conPrint("loading map...");
-        conPrint(String.format(
+        Logger.info("loading map...");
+        Logger.debug(String.format(
                 "map width: %d, map height: %d",
                 model.getCurrentMap().getWidth(),
                 model.getCurrentMap().getHeight())
@@ -169,7 +174,7 @@ public class SimulationWindowController implements CoreWarsController {
     }
 
     private void loadBugs() {
-        conPrint(String.format("loading %d bugs...", model.getBugList().size()));
+        Logger.info(String.format("loading %d bugs...", model.getBugList().size()));
         bugs = new HashMap<>();
 
         model.getBugList().forEach(
@@ -182,14 +187,14 @@ public class SimulationWindowController implements CoreWarsController {
 
         List<Dimension2D> portals = model.getCurrentMap().getPortals();
 
-        conPrint("placing bugs on map...");
+        Logger.debug("placing bugs on map...");
 
         currentPortal = 0;
 
         bugs.forEach((s, bugEntity) -> {
             int x = (int) portals.get(currentPortal).getWidth();
             int y = (int) portals.get(currentPortal).getHeight();
-            conPrint(String.format("placing %s on %dx%d", s, x, y));
+            Logger.debug(String.format("placing %s on %dx%d", s, x, y));
             bugEntity.setX(x)
                     .setY(y);
             currentPortal++;
@@ -199,13 +204,13 @@ public class SimulationWindowController implements CoreWarsController {
     }
 
     private void compileBugs() {
-        conPrint("Compiling bugs...");
+        Logger.info("Compiling bugs...");
         bugs.forEach((bugName, bugEntity) -> {
                     Parser.loadMethods(bugEntity.getPath()).forEach(
                             (name, body) -> bugEntity.addMethod(name, Parser.readStack(body)));
                     conPrint(String.format("loaded %d functions for %s.", bugEntity.getMethodCount(), bugName));
                 }
         );
-        conPrint("bugs compiled.");
+        Logger.info("bugs compiled.");
     }
 }
