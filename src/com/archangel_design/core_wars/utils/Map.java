@@ -13,6 +13,7 @@ public class Map {
     private Integer height;
     private Integer cellSize = 30;
     private int portalCount = 0;
+    private List<Shell> shells;
 
     public int getIndex(double realPosition) {
         return (int) Math.ceil(realPosition / cellSize);

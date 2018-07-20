@@ -2,6 +2,7 @@ package com.archangel_design.core_wars.controller;
 
 import com.archangel_design.core_wars.model.AbstractModel;
 import com.archangel_design.core_wars.model.SimulationWindowModel;
+import com.archangel_design.core_wars.utils.Logger;
 import com.archangel_design.core_wars.utils.MapRenderer;
 import com.archangel_design.core_wars.utils.Sound;
 import com.archangel_design.core_wars.utils.SoundPlayer;
@@ -15,6 +16,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Dimension2D;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
@@ -25,6 +27,9 @@ public class SimulationWindowController implements CoreWarsController {
 
     @FXML
     TextArea console;
+
+    @FXML
+    Label timeLabel;
 
     SimulationWindowModel model;
 
@@ -48,6 +53,7 @@ public class SimulationWindowController implements CoreWarsController {
     @Override
     public void onShow() {
         cycles = 0;
+        Logger.setConsole(console);
         mapCanvas.getGraphicsContext2D().clearRect(0, 0, 600, 600);
         conPrint("Starting...");
         loadMap();
@@ -73,11 +79,13 @@ public class SimulationWindowController implements CoreWarsController {
 
     private void startSimulation() {
         conPrint("Staring simulation...");
+        Logger.reset();
         running = true;
         Executor.setConsole(console);
         Executor.setCurrentMap(model.getCurrentMap());
         SoundPlayer.playSound(Sound.SND_BUZZER);
-        new Thread(() -> sceneUpdate()).start();
+        new Thread(this::sceneUpdate).start();
+        new Thread(this::timeTick).start();
 
         while (running) {
             bugs.forEach((s, bugEntity) -> {
@@ -104,6 +112,22 @@ public class SimulationWindowController implements CoreWarsController {
 
         conPrint("Simulation ended.");
 
+    }
+
+    private void timeTick() {
+        while (running) {
+            Logger.tick();
+            Platform.runLater(() ->
+                    timeLabel.setText(
+                            String.format("Time elapsed: %d", Logger.getTime())
+                    )
+            );
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void sceneUpdate() {
