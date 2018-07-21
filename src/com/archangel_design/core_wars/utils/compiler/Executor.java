@@ -7,6 +7,7 @@ import com.archangel_design.core_wars.utils.compiler.exception.NoLoopMethodExcep
 import javafx.scene.control.TextArea;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 
 public class Executor {
@@ -14,6 +15,7 @@ public class Executor {
     public static boolean debugMode = true;
     private static TextArea console;
     private static Map currentMap;
+    private static HashMap<String, BugEntity> bugList;
 
     public static void setDebugMode(boolean debugMode) {
         Executor.debugMode = debugMode;
@@ -33,6 +35,8 @@ public class Executor {
             throw new NoLoopMethodException(String.format("No %s method for bug %s.", bug.getCompiler().getCurrentMethod(), bug.getName()));
 
         Instruction instruction = bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).getNext();
+        if (instruction == null)
+            return;
         switch (instruction.getType()) {
             case METHOD_CALL:
                 callMethod(bug, instruction);
@@ -56,7 +60,6 @@ public class Executor {
                 else
                     bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).conditionNotMet();
         }
-
     }
 
     private static String evaluateArgument(BugEntity bug, String argument) {
@@ -100,6 +103,9 @@ public class Executor {
             case "scanForward":
                 scanForward(bug);
                 break;
+            case "longScan":
+                longScan(bug);
+                break;
             case "scanLeft":
                 break;
             case "scanRight":
@@ -110,8 +116,112 @@ public class Executor {
                 break;
             case "sendNoise":
                 break;
+            case "debug":
+                Logger.debug(evaluateArgument(bug, instruction.getArguments().keySet().stream().findFirst().orElse("NULL")));
+                break;
+            case "resetDetection":
+                resetDetected(bug);
+                break;
         }
     }
+
+    private static void longScan(BugEntity bug) {
+        SoundPlayer.playSound(Sound.SND_SCAN);
+        switch (bug.getDirection()) {
+            case DOWN:
+                longScanDown(bug);
+                break;
+            case UP:
+                longScanUp(bug);
+                break;
+            case LEFT:
+                longScanLeft(bug);
+                break;
+            case RIGHT:
+                longScanRight(bug);
+        }
+    }
+
+    private static void longScanLeft(BugEntity bug) {
+        if (bug.getX() == 1)
+            setScanResult(bug, ScanResult.CLEAR);
+        for (int i = bug.getX(); i > 0; i--) {
+            if (isBugInPosition(i, bug.getY(), bug)) {
+                setScanResult(bug, ScanResult.BUG);
+                return;
+            }
+        }
+        setScanResult(bug, ScanResult.CLEAR);
+    }
+
+    private static void longScanRight(BugEntity bug) {
+        if (bug.getX() == currentMap.getWidth())
+            setScanResult(bug, ScanResult.CLEAR);
+        for (int i = bug.getX(); i <= currentMap.getWidth(); i++) {
+            if (isBugInPosition(i, bug.getY(), bug)) {
+                setScanResult(bug, ScanResult.BUG);
+                return;
+            }
+        }
+        setScanResult(bug, ScanResult.CLEAR);
+    }
+
+    private static void longScanDown(BugEntity bug) {
+        if (bug.getY() == currentMap.getHeight())
+            setScanResult(bug, ScanResult.CLEAR);
+        for (int i = bug.getY(); i <= currentMap.getHeight(); i++) {
+            if (isBugInPosition(bug.getX(), i, bug)) {
+                setScanResult(bug, ScanResult.BUG);
+                return;
+            }
+        }
+        setScanResult(bug, ScanResult.CLEAR);
+    }
+
+    private static void longScanUp(BugEntity bug) {
+        if (bug.getY() == 1)
+            setScanResult(bug, ScanResult.CLEAR);
+        for (int i = bug.getY(); i > 0; i--) {
+            if (isBugInPosition(bug.getX(), i, bug)) {
+                setScanResult(bug, ScanResult.BUG);
+                return;
+            }
+        }
+        setScanResult(bug, ScanResult.CLEAR);
+    }
+
+    private static boolean isBugInPosition(int x, int y) {
+        for (Entry<String, BugEntity> b : bugList.entrySet()) {
+            if (b.getValue().getX() == x &&
+                    b.getValue().getY() == y)
+                return true;
+        }
+        return false;
+    }
+
+    private static boolean isBugInPosition(int x, int y, BugEntity searcher) {
+        for (Entry<String, BugEntity> b : bugList.entrySet()) {
+            if ((b.getValue().getX() == x &&
+                    b.getValue().getY() == y) && !isSamePosition(x, y, searcher.getX(), searcher.getY())) {
+                onDetected(b.getValue());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void onDetected(BugEntity value) {
+        value.getCompiler().declareVariable("$detected", "YES");
+    }
+
+    private static void resetDetected(BugEntity bug) {
+        bug.getCompiler().undeclareVariable("$detected");
+    }
+
+    private static boolean isSamePosition(int x, int y, int x1, int y1) {
+        return (x == x1 && y == y1);
+    }
+
 
     private static void turnRandom(BugEntity bug) {
         Random rand = new Random();
@@ -142,24 +252,28 @@ public class Executor {
 
         if (x > currentMap.getWidth() || x < 1 ||
                 y > currentMap.getHeight() || y < 1) {
-            bug.getCompiler().declareVariable("$scanResult", "BARRIER");
+            setScanResult(bug, ScanResult.BARRIER);
             return;
         }
 
         switch (currentMap.getCell(x, y).getType()) {
             case BARRIER:
-                bug.getCompiler().declareVariable("$scanResult", "BARRIER");
+                setScanResult(bug, ScanResult.BARRIER);
                 break;
             case EMPTY:
             case PORTAL:
-                bug.getCompiler().declareVariable("$scanResult", "EMPTY");
+                setScanResult(bug, ScanResult.EMPTY);
                 break;
             case MINE:
-                bug.getCompiler().declareVariable("$scanResult", "MINE");
+                setScanResult(bug, ScanResult.MINE);
                 break;
         }
 
         // @TODO: detect bugs
+    }
+
+    private static void setScanResult(BugEntity bug, ScanResult result) {
+        bug.getCompiler().declareVariable("$scanResult", result.toString());
     }
 
     private static void move(BugEntity bug) {
@@ -294,5 +408,9 @@ public class Executor {
                 bug.setDirection(Direction.LEFT);
                 break;
         }
+    }
+
+    public static void setBugs(HashMap<String, BugEntity> bugs) {
+        bugList = bugs;
     }
 }

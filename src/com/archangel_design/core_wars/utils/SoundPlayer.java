@@ -17,6 +17,9 @@ public class SoundPlayer {
             case SND_MOVE:
                 Assets.getAudio("move.wav").play();
                 break;
+            case SND_SCAN:
+                Assets.getAudio("scan.wav").play();
+                break;
         }
     }
 

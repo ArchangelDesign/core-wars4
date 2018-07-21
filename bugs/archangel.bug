@@ -23,4 +23,24 @@ function loop() {
         move();
     endif;
 
+    longRangeScan();
+}
+
+function longRangeScan() {
+    debug(Scanning long range);
+    longScan();
+    debug($scanResult);
+    if_($scanResult == BUG)
+        debug(I found the bug);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+        debug(XXXXXXXXXXXXXXXXXXXXXXXXXX);
+
+    endif;
+    loop();
 }

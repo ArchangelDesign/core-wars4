@@ -6,9 +6,11 @@ function onStart() {
 }
 
 function loop() {
-    move();
-    turnLeft();
-    move();
-    move();
-    move();
+    if_($detected == YES)
+        debug(Ive been detected);
+        debug(Ive been detected);
+        debug(Ive been detected);
+        debug(Ive been detected);
+        resetDetection();
+    endif;
 }
