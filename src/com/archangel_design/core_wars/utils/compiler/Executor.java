@@ -4,7 +4,6 @@ import com.archangel_design.core_wars.utils.*;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.Direction;
 import com.archangel_design.core_wars.utils.compiler.exception.NoLoopMethodException;
-import com.sun.istack.internal.NotNull;
 import javafx.scene.control.TextArea;
 
 import java.util.HashMap;
@@ -24,7 +23,7 @@ public class Executor {
         Executor.console = console;
     }
 
-    public static void setCurrentMap(@NotNull Map map) {
+    public static void setCurrentMap(Map map) {
         currentMap = map;
     }
 
