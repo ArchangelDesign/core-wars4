@@ -26,6 +26,8 @@ public class Stack {
     public Instruction getNext() {
         if (endOfStack())
             resetStack();
+        if (instructions.size() == 0)
+            return null;
         Instruction i = instructions.get(currentInstruction);
         currentInstruction++;
 

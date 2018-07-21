@@ -86,6 +86,7 @@ public class SimulationWindowController implements CoreWarsController {
         running = true;
         Executor.setConsole(console);
         Executor.setCurrentMap(model.getCurrentMap());
+        Executor.setBugs(bugs);
         SoundPlayer.playSound(Sound.SND_BUZZER);
         new Thread(this::sceneUpdate).start();
         new Thread(this::timeTick).start();

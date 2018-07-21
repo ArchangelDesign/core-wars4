@@ -46,7 +46,13 @@ public class Compiler {
         variables.put(name, value);
     }
 
+
     public Stack getCurrentStack() {
         return functions.get(getCurrentMethod());
+    }
+
+    public void undeclareVariable(String name) {
+        if (variables.containsKey(name))
+            variables.remove(name);
     }
 }
