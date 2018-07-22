@@ -9,6 +9,7 @@ import javafx.scene.paint.Paint;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class MapRenderer {
 
@@ -40,14 +41,27 @@ public class MapRenderer {
     }
 
     public void drawBugs(HashMap<String, BugEntity> bugs, GraphicsContext gc) {
-        bugs.forEach((s, bugEntity) -> drawBug(
+        bugs.forEach((s, bugEntity) -> {
+            if (bugEntity.isAlive())
+            drawBug(
                 bugEntity.getRealX(30),
                 bugEntity.getRealY(30),
                 1,
                 30,
                 bugEntity.getDirection(),
                 gc
-        ));
+        );});
+    }
+
+    public void drawBullets(final List<Shell> bullets, GraphicsContext gc) {
+        synchronized (bullets) {
+            bullets.forEach(shell ->
+                    gc.drawImage(
+                            Assets.getImage("shell.png", shell.getDirection()), shell.getX(),
+                            shell.getY(), 30, 30
+                    )
+            );
+        }
     }
 
     private void drawCell(Cell cell, GraphicsContext context) {

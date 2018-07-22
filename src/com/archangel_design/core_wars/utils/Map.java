@@ -19,6 +19,10 @@ public class Map {
         return (int) Math.ceil(realPosition / cellSize);
     }
 
+    public Integer getPosition(int realPosition) {
+        return ((realPosition + 15) / cellSize) + 1;
+    }
+
     class Row extends HashMap<Integer, Cell> {
     }
 
@@ -68,6 +72,10 @@ public class Map {
     }
 
     public Cell getCell(int x, int y) {
+        if (!rows.containsKey(y))
+            return null;
+        if (!rows.get(y).containsKey(x))
+            return null;
         return rows.get(y).get(x);
     }
 

@@ -2,12 +2,10 @@ package com.archangel_design.core_wars.controller;
 
 import com.archangel_design.core_wars.model.AbstractModel;
 import com.archangel_design.core_wars.model.SimulationWindowModel;
-import com.archangel_design.core_wars.utils.Logger;
-import com.archangel_design.core_wars.utils.MapRenderer;
-import com.archangel_design.core_wars.utils.Sound;
-import com.archangel_design.core_wars.utils.SoundPlayer;
+import com.archangel_design.core_wars.utils.*;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.BugLoader;
+import com.archangel_design.core_wars.utils.bugs.Direction;
 import com.archangel_design.core_wars.utils.compiler.Executor;
 import com.archangel_design.core_wars.utils.compiler.Parser;
 import com.archangel_design.core_wars.utils.compiler.Stack;
@@ -20,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,6 +51,8 @@ public class SimulationWindowController implements CoreWarsController {
 
     @FXML
     Canvas mapCanvas;
+
+    private volatile List<Shell> shells = new ArrayList<>();
 
     @Override
     public void onShow() {
@@ -87,9 +88,13 @@ public class SimulationWindowController implements CoreWarsController {
         Executor.setConsole(console);
         Executor.setCurrentMap(model.getCurrentMap());
         Executor.setBugs(bugs);
+        Executor.setShells(shells);
         SoundPlayer.playSound(Sound.SND_BUZZER);
         new Thread(this::sceneUpdate).start();
         new Thread(this::timeTick).start();
+        new Thread(this::processShells).start();
+
+        //shells.add(new Shell(100, 100, Direction.DOWN, bugs.values().stream().findFirst().get()));
 
         while (running) {
             bugs.forEach((s, bugEntity) -> {
@@ -136,11 +141,23 @@ public class SimulationWindowController implements CoreWarsController {
         }
     }
 
+    private void processShells() {
+        while (running) {
+            Executor.processShells();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void sceneUpdate() {
         while (running) {
             Platform.runLater(() -> {
                 mapRenderer.redrawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
                 mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
+                mapRenderer.drawBullets(shells, mapCanvas.getGraphicsContext2D());
             });
             try {
                 Thread.sleep(50);
