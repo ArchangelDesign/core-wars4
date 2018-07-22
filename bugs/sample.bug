@@ -7,10 +7,30 @@ function onStart() {
 
 function loop() {
     if_($detected == YES)
-        debug(Ive been detected);
-        debug(Ive been detected);
-        debug(Ive been detected);
-        debug(Ive been detected);
+        turnRandom();
+        move();
         resetDetection();
     endif;
+
+    scanForward();
+
+    if_($scanResult == BARRIER)
+        turnRandom();
+        loop();
+    endif;
+
+    if_($scanResult == MINE)
+        turnRandom();
+        loop();
+    endif;
+
+    if_($scanResult == EMPTY)
+        move();
+    endif;
+
+    longScan();
+    if_($scanResult == BUG)
+        shoot();
+    endif;
+
 }

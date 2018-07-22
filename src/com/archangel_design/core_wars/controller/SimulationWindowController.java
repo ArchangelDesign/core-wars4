@@ -117,10 +117,29 @@ public class SimulationWindowController implements CoreWarsController {
                 running = false;
                 Logger.info("Simulation terminated due to reach of max cycles.");
             }
+
+            if (Executor.shouldMatchEnd()) {
+                running = false;
+                Logger.info("Match ended.");
+                BugEntity winner = getWinner();
+                if (winner == null) {
+                    Logger.error("Could not find a winner.");
+                    return;
+                }
+                Logger.info(String.format("Winner: %s with %d kills.", winner.getName(), 0));
+            }
         }
 
         Logger.info("Simulation ended.");
 
+    }
+
+    private BugEntity getWinner() {
+        for (BugEntity b : bugs.values()) {
+            if (b.isAlive())
+                return b;
+        }
+        return null;
     }
 
     private void timeTick() {

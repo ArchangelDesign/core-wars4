@@ -272,6 +272,15 @@ public class Executor {
         return false;
     }
 
+    public static boolean shouldMatchEnd() {
+        int bugsAlive = 0;
+        for (BugEntity b : bugList.values()) {
+            if (b.isAlive())
+                bugsAlive++;
+        }
+        return (bugsAlive < 2);
+    }
+
     private static void onDetected(BugEntity value) {
         value.getCompiler().declareVariable("$detected", "YES");
     }
