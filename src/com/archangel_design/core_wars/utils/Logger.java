@@ -8,6 +8,8 @@ public class Logger {
 
     private static TextArea console;
 
+    private static Level level = Level.INFO;
+
     private static Long timeElapsed = 0L;
 
     public static void setConsole(TextArea t) {
@@ -16,6 +18,8 @@ public class Logger {
 
     public static void reset() {
         timeElapsed = 0L;
+        if (console != null)
+            console.clear();
     }
 
     public static void tick() {
@@ -23,7 +27,8 @@ public class Logger {
     }
 
     public static void debug(String msg) {
-        output(msg, Level.DEBUG);
+        if (level == Level.DEBUG)
+            output(msg, Level.DEBUG);
     }
 
     public static Long getTime() {

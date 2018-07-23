@@ -89,6 +89,7 @@ public class SimulationWindowController implements CoreWarsController {
         Executor.setCurrentMap(model.getCurrentMap());
         Executor.setBugs(bugs);
         Executor.setShells(shells);
+        resetBugs();
         SoundPlayer.playSound(Sound.SND_BUZZER);
         new Thread(this::sceneUpdate).start();
         new Thread(this::timeTick).start();
@@ -136,6 +137,10 @@ public class SimulationWindowController implements CoreWarsController {
 
         Logger.info("Simulation ended.");
 
+    }
+
+    private void resetBugs() {
+        bugs.forEach((s, bugEntity) -> bugEntity.getCompiler().declareVariable("$detected", "NO"));
     }
 
     private BugEntity getWinner() {
