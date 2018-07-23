@@ -126,6 +126,9 @@ public class Executor {
             case "resetDetection":
                 resetDetected(bug);
                 break;
+            case "resetProximityAlert":
+                bug.getCompiler().declareVariable("$proximity", "NO");
+                break;
         }
     }
 
@@ -175,6 +178,11 @@ public class Executor {
                         return true;
                     }
                 }
+                if (currentMap.getCell(shellX, shellY).getType() == CellType.MINE) {
+                    currentMap.getCell(shellX, shellY).setType(CellType.EMPTY);
+                    SoundPlayer.playSound(Sound.SND_EXPLOSION);
+                    return true;
+                }
                 return false;
             });
         }
@@ -182,7 +190,7 @@ public class Executor {
 
     private static void kill(BugEntity bugEntity) {
         bugEntity.kill();
-        SoundPlayer.playSound(Sound.EXPLOSION);
+        SoundPlayer.playSound(Sound.SND_EXPLOSION);
     }
 
     private static void longScan(BugEntity bug) {
@@ -285,7 +293,26 @@ public class Executor {
     }
 
     private static void resetDetected(BugEntity bug) {
-        bug.getCompiler().undeclareVariable("$detected");
+        bug.getCompiler().declareVariable("$detected", "NO");
+    }
+
+    public static void sendProximityAlerts() {
+        // @TODO
+        bugList.forEach((s, bugEntity) -> {
+            for (BugEntity target : bugList.values()) {
+                if (bugEntity.getName().equals(target.getName()))
+                    continue;
+                if (!target.isAlive())
+                    continue;
+                int x = target.getX();
+                int y = target.getY();
+                int w = Math.abs(x - bugEntity.getX());
+                int h = Math.abs(y - bugEntity.getY());
+                int range = (int) Math.sqrt(w*w + h*h);
+                if (range < 4)
+                    bugEntity.getCompiler().declareVariable("$proximity", "YES");
+            }
+        });
     }
 
     private static boolean isSamePosition(int x, int y, int x1, int y1) {

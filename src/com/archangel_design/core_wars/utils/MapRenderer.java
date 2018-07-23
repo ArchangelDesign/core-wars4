@@ -21,7 +21,7 @@ public class MapRenderer {
     private static final Paint colorTrap = Color.rgb(200, 150, 10, 0.4);
 
     public void redrawMap(GraphicsContext gc, Map currentMap) {
-        gc.clearRect(0, 0, currentMap.getWidth() * 30, currentMap.getHeight() * 30);
+        gc.clearRect(0, 0, currentMap.getWidth() * 30 + 300, currentMap.getHeight() * 30 + 300);
         drawMap(gc, currentMap);
     }
 

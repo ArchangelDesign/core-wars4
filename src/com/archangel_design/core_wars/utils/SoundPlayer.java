@@ -23,7 +23,7 @@ public class SoundPlayer {
             case SND_SHOOT:
                 Assets.getAudio("shot.wav").play();
                 break;
-            case EXPLOSION:
+            case SND_EXPLOSION:
                 Assets.getAudio("explosion.wav").play();
                 break;
         }

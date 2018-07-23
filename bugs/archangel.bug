@@ -7,6 +7,18 @@ function onStart() {
 
 function loop() {
 
+    if_($proximity == YES)
+        shoot();
+        tornLeft();
+        shoot();
+        turnLeft();
+        shoot();
+        turnLeft();
+        shoot();
+        turnLeft();
+        resetProximityAlert();
+    endif;
+
     scanForward();
 
     if_($scanResult == BARRIER)
@@ -15,7 +27,7 @@ function loop() {
     endif;
 
     if_($scanResult == MINE)
-        turnRandom();
+        shoot();
         loop();
     endif;
 

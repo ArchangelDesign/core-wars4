@@ -20,7 +20,7 @@ function loop() {
     endif;
 
     if_($scanResult == MINE)
-        turnRandom();
+        shoot();
         loop();
     endif;
 

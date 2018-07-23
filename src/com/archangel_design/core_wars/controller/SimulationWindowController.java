@@ -85,6 +85,7 @@ public class SimulationWindowController implements CoreWarsController {
         Logger.info("Staring simulation...");
         Logger.reset();
         running = true;
+        shells = new ArrayList<>();
         Executor.setConsole(console);
         Executor.setCurrentMap(model.getCurrentMap());
         Executor.setBugs(bugs);
@@ -107,8 +108,10 @@ public class SimulationWindowController implements CoreWarsController {
 
             cycles++;
 
+            Executor.sendProximityAlerts();
+
             try {
-                Thread.sleep(100);
+                Thread.sleep(80);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -141,6 +144,7 @@ public class SimulationWindowController implements CoreWarsController {
 
     private void resetBugs() {
         bugs.forEach((s, bugEntity) -> bugEntity.getCompiler().declareVariable("$detected", "NO"));
+        bugs.forEach((s, bugEntity) -> bugEntity.getCompiler().declareVariable("$proximity", "NO"));
     }
 
     private BugEntity getWinner() {
