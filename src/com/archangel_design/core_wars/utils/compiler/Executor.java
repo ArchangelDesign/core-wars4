@@ -169,7 +169,7 @@ public class Executor {
                 int shellX = currentMap.getPosition(shell.getX());
                 int shellY = currentMap.getPosition(shell.getY());
                 for (BugEntity bugEntity : bugList.values()) {
-                    if (bugEntity.getX() == shellX && bugEntity.getY() == shellY && !bugEntity.getName().equals(shell.getOwner().getName())) {
+                    if (bugEntity.getX() == shellX && bugEntity.getY() == shellY && !bugEntity.getName().equals(shell.getOwner().getName()) && bugEntity.isAlive()) {
                         Logger.info(String.format("[%s] kills [%s] with a shell.", shell.getOwner().getName(), bugEntity.getName()));
                         kill(bugEntity);
                         return true;
@@ -186,7 +186,6 @@ public class Executor {
     }
 
     private static void longScan(BugEntity bug) {
-        SoundPlayer.playSound(Sound.SND_SCAN);
         switch (bug.getDirection()) {
             case DOWN:
                 longScanDown(bug);

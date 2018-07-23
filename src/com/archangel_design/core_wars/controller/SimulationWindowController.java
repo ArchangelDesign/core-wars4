@@ -94,12 +94,11 @@ public class SimulationWindowController implements CoreWarsController {
         new Thread(this::timeTick).start();
         new Thread(this::processShells).start();
 
-        //shells.add(new Shell(100, 100, Direction.DOWN, bugs.values().stream().findFirst().get()));
-
         while (running) {
             bugs.forEach((s, bugEntity) -> {
                 try {
-                    Executor.executeNextInstruction(bugEntity);
+                    if (bugEntity.isAlive())
+                        Executor.executeNextInstruction(bugEntity);
                 } catch (NoLoopMethodException e) {
                     Logger.error(e.getMessage());
                 }
@@ -120,6 +119,11 @@ public class SimulationWindowController implements CoreWarsController {
 
             if (Executor.shouldMatchEnd()) {
                 running = false;
+                Platform.runLater(() -> {
+                    mapRenderer.redrawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
+                    mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
+                });
+
                 Logger.info("Match ended.");
                 BugEntity winner = getWinner();
                 if (winner == null) {

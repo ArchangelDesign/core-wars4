@@ -1,0 +1,40 @@
+
+function onStart() {
+
+    someMethod($myVariable);
+    anotherMethod ();
+}
+
+function loop() {
+
+    longScan();
+    if_($scanResult == BUG)
+        shoot();
+    endif;
+
+    scanForward();
+
+    if_($scanResult == BARRIER)
+        turnRandom();
+        loop();
+    endif;
+
+    if_($scanResult == MINE)
+        turnRandom();
+        loop();
+    endif;
+
+    if_($scanResult == EMPTY)
+        move();
+    endif;
+
+    longRangeScan();
+}
+
+function longRangeScan() {
+    longScan();
+    if_($scanResult == BUG)
+        shoot();
+    endif;
+    loop();
+}
