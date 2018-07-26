@@ -7,19 +7,17 @@ function onStart() {
 
 function loop() {
 
-    $myVariable = 1;
-
-    if_($proximity == YES)
+    if_($initialized != 1)
         shoot();
-        tornLeft();
+        turLeft();
         shoot();
         turnLeft();
         shoot();
         turnLeft();
         shoot();
-        turnLeft();
-        resetProximityAlert();
     endif;
+
+    $initialized = 1;
 
     scanForward();
 
@@ -36,14 +34,4 @@ function loop() {
     if_($scanResult == EMPTY)
         move();
     endif;
-
-    longRangeScan();
-}
-
-function longRangeScan() {
-    longScan();
-    if_($scanResult == BUG)
-        shoot();
-    endif;
-    loop();
 }

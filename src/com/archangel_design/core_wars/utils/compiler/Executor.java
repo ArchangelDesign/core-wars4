@@ -47,7 +47,15 @@ public class Executor {
             case CONDITION_START:
                 handleCondition(bug, instruction);
                 break;
+            case ASSIGNMENT:
+                assignment(bug, instruction);
+                break;
         }
+    }
+
+    private static void assignment(BugEntity bug, Instruction instruction) {
+        // @TODO: handle method calls
+        bug.getCompiler().declareVariable(instruction.getName(), instruction.getArguments().values().stream().findFirst().orElse(null));
     }
 
     private static void handleCondition(BugEntity bug, Instruction instruction) {
@@ -59,6 +67,12 @@ public class Executor {
             case "==":
                 if (arg1.equals(arg2))
                     // follow inside
+                    return;
+                else
+                    bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).conditionNotMet();
+                break;
+            case "!=":
+                if (!arg1.equals(arg2))
                     return;
                 else
                     bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).conditionNotMet();
