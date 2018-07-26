@@ -5,5 +5,7 @@ public enum Sound {
     SND_BUZZER,
     SND_MOVE,
     AMB_NATURE,
-    SND_SCAN;
+    SND_SCAN,
+    SND_SHOOT,
+    SND_EXPLOSION;
 }

@@ -7,6 +7,8 @@ import com.archangel_design.core_wars.utils.compiler.exception.NoLoopMethodExcep
 import javafx.scene.control.TextArea;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -16,6 +18,7 @@ public class Executor {
     private static TextArea console;
     private static Map currentMap;
     private static HashMap<String, BugEntity> bugList;
+    private static volatile List<Shell> shells;
 
     public static void setDebugMode(boolean debugMode) {
         Executor.debugMode = debugMode;
@@ -44,7 +47,15 @@ public class Executor {
             case CONDITION_START:
                 handleCondition(bug, instruction);
                 break;
+            case ASSIGNMENT:
+                assignment(bug, instruction);
+                break;
         }
+    }
+
+    private static void assignment(BugEntity bug, Instruction instruction) {
+        // @TODO: handle method calls
+        bug.getCompiler().declareVariable(instruction.getName(), instruction.getArguments().values().stream().findFirst().orElse(null));
     }
 
     private static void handleCondition(BugEntity bug, Instruction instruction) {
@@ -56,6 +67,12 @@ public class Executor {
             case "==":
                 if (arg1.equals(arg2))
                     // follow inside
+                    return;
+                else
+                    bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).conditionNotMet();
+                break;
+            case "!=":
+                if (!arg1.equals(arg2))
                     return;
                 else
                     bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).conditionNotMet();
@@ -113,6 +130,7 @@ public class Executor {
             case "scanBack":
                 break;
             case "shoot":
+                shoot(bug);
                 break;
             case "sendNoise":
                 break;
@@ -122,11 +140,74 @@ public class Executor {
             case "resetDetection":
                 resetDetected(bug);
                 break;
+            case "resetProximityAlert":
+                bug.getCompiler().declareVariable("$proximity", "NO");
+                break;
         }
     }
 
+    private static void shoot(BugEntity bug) {
+        SoundPlayer.playSound(Sound.SND_SHOOT);
+        shells.add(new Shell((bug.getX() - 1) * 30, (bug.getY() - 1) * 30, bug.getDirection(), bug));
+    }
+
+    public static void processShells() {
+
+        synchronized (shells) {
+            shells.removeIf(s -> s.getX() < 0 || s.getX() > (currentMap.getWidth() * 30 - 30) ||
+                    s.getY() < 0 || s.getY() > (currentMap.getHeight() * 30 - 30));
+
+            shells.forEach(
+                    shell -> {
+                        switch (shell.getDirection()) {
+                            case LEFT:
+                                shell.setX(shell.getX() - 6);
+                                break;
+                            case RIGHT:
+                                shell.setX(shell.getX() + 6);
+                                break;
+                            case UP:
+                                shell.setY(shell.getY() - 6);
+                                break;
+                            case DOWN:
+                                shell.setY(shell.getY() + 6);
+                                break;
+                        }
+                    }
+            );
+
+            shells.removeIf(shell ->
+                currentMap.getCell(
+                        currentMap.getPosition(shell.getX()), currentMap.getPosition(shell.getY()))
+                        .getType() == CellType.BARRIER
+            );
+
+            shells.removeIf(shell -> {
+                int shellX = currentMap.getPosition(shell.getX());
+                int shellY = currentMap.getPosition(shell.getY());
+                for (BugEntity bugEntity : bugList.values()) {
+                    if (bugEntity.getX() == shellX && bugEntity.getY() == shellY && !bugEntity.getName().equals(shell.getOwner().getName()) && bugEntity.isAlive()) {
+                        Logger.info(String.format("[%s] kills [%s] with a shell.", shell.getOwner().getName(), bugEntity.getName()));
+                        kill(bugEntity);
+                        return true;
+                    }
+                }
+                if (currentMap.getCell(shellX, shellY).getType() == CellType.MINE) {
+                    currentMap.getCell(shellX, shellY).setType(CellType.EMPTY);
+                    SoundPlayer.playSound(Sound.SND_EXPLOSION);
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    private static void kill(BugEntity bugEntity) {
+        bugEntity.kill();
+        SoundPlayer.playSound(Sound.SND_EXPLOSION);
+    }
+
     private static void longScan(BugEntity bug) {
-        SoundPlayer.playSound(Sound.SND_SCAN);
         switch (bug.getDirection()) {
             case DOWN:
                 longScanDown(bug);
@@ -202,7 +283,9 @@ public class Executor {
     private static boolean isBugInPosition(int x, int y, BugEntity searcher) {
         for (Entry<String, BugEntity> b : bugList.entrySet()) {
             if ((b.getValue().getX() == x &&
-                    b.getValue().getY() == y) && !isSamePosition(x, y, searcher.getX(), searcher.getY())) {
+                    b.getValue().getY() == y) &&
+                    !isSamePosition(x, y, searcher.getX(), searcher.getY()) &&
+                    b.getValue().isAlive()) {
                 onDetected(b.getValue());
                 return true;
             }
@@ -210,12 +293,40 @@ public class Executor {
         return false;
     }
 
+    public static boolean shouldMatchEnd() {
+        int bugsAlive = 0;
+        for (BugEntity b : bugList.values()) {
+            if (b.isAlive())
+                bugsAlive++;
+        }
+        return (bugsAlive < 2);
+    }
+
     private static void onDetected(BugEntity value) {
         value.getCompiler().declareVariable("$detected", "YES");
     }
 
     private static void resetDetected(BugEntity bug) {
-        bug.getCompiler().undeclareVariable("$detected");
+        bug.getCompiler().declareVariable("$detected", "NO");
+    }
+
+    public static void sendProximityAlerts() {
+        // @TODO
+        bugList.forEach((s, bugEntity) -> {
+            for (BugEntity target : bugList.values()) {
+                if (bugEntity.getName().equals(target.getName()))
+                    continue;
+                if (!target.isAlive())
+                    continue;
+                int x = target.getX();
+                int y = target.getY();
+                int w = Math.abs(x - bugEntity.getX());
+                int h = Math.abs(y - bugEntity.getY());
+                int range = (int) Math.sqrt(w*w + h*h);
+                if (range < 4)
+                    bugEntity.getCompiler().declareVariable("$proximity", "YES");
+            }
+        });
     }
 
     private static boolean isSamePosition(int x, int y, int x1, int y1) {
@@ -412,5 +523,9 @@ public class Executor {
 
     public static void setBugs(HashMap<String, BugEntity> bugs) {
         bugList = bugs;
+    }
+
+    public static void setShells(List<Shell> shells) {
+        Executor.shells = shells;
     }
 }

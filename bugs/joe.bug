@@ -7,18 +7,9 @@ function onStart() {
 
 function loop() {
 
-    $myVariable = 1;
-
-    if_($proximity == YES)
+    longScan();
+    if_($scanResult == BUG)
         shoot();
-        tornLeft();
-        shoot();
-        turnLeft();
-        shoot();
-        turnLeft();
-        shoot();
-        turnLeft();
-        resetProximityAlert();
     endif;
 
     scanForward();

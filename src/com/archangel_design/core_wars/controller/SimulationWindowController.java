@@ -2,12 +2,10 @@ package com.archangel_design.core_wars.controller;
 
 import com.archangel_design.core_wars.model.AbstractModel;
 import com.archangel_design.core_wars.model.SimulationWindowModel;
-import com.archangel_design.core_wars.utils.Logger;
-import com.archangel_design.core_wars.utils.MapRenderer;
-import com.archangel_design.core_wars.utils.Sound;
-import com.archangel_design.core_wars.utils.SoundPlayer;
+import com.archangel_design.core_wars.utils.*;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.BugLoader;
+import com.archangel_design.core_wars.utils.bugs.Direction;
 import com.archangel_design.core_wars.utils.compiler.Executor;
 import com.archangel_design.core_wars.utils.compiler.Parser;
 import com.archangel_design.core_wars.utils.compiler.Stack;
@@ -20,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -53,6 +52,8 @@ public class SimulationWindowController implements CoreWarsController {
     @FXML
     Canvas mapCanvas;
 
+    private volatile List<Shell> shells = new ArrayList<>();
+
     @Override
     public void onShow() {
         cycles = 0;
@@ -84,17 +85,22 @@ public class SimulationWindowController implements CoreWarsController {
         Logger.info("Staring simulation...");
         Logger.reset();
         running = true;
+        shells = new ArrayList<>();
         Executor.setConsole(console);
         Executor.setCurrentMap(model.getCurrentMap());
         Executor.setBugs(bugs);
+        Executor.setShells(shells);
+        resetBugs();
         SoundPlayer.playSound(Sound.SND_BUZZER);
         new Thread(this::sceneUpdate).start();
         new Thread(this::timeTick).start();
+        new Thread(this::processShells).start();
 
         while (running) {
             bugs.forEach((s, bugEntity) -> {
                 try {
-                    Executor.executeNextInstruction(bugEntity);
+                    if (bugEntity.isAlive())
+                        Executor.executeNextInstruction(bugEntity);
                 } catch (NoLoopMethodException e) {
                     Logger.error(e.getMessage());
                 }
@@ -102,8 +108,10 @@ public class SimulationWindowController implements CoreWarsController {
 
             cycles++;
 
+            Executor.sendProximityAlerts();
+
             try {
-                Thread.sleep(100);
+                Thread.sleep(80);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -112,10 +120,39 @@ public class SimulationWindowController implements CoreWarsController {
                 running = false;
                 Logger.info("Simulation terminated due to reach of max cycles.");
             }
+
+            if (Executor.shouldMatchEnd()) {
+                running = false;
+                Platform.runLater(() -> {
+                    mapRenderer.redrawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
+                    mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
+                });
+
+                Logger.info("Match ended.");
+                BugEntity winner = getWinner();
+                if (winner == null) {
+                    Logger.error("Could not find a winner.");
+                    return;
+                }
+                Logger.info(String.format("Winner: %s with %d kills.", winner.getName(), 0));
+            }
         }
 
         Logger.info("Simulation ended.");
 
+    }
+
+    private void resetBugs() {
+        bugs.forEach((s, bugEntity) -> bugEntity.getCompiler().declareVariable("$detected", "NO"));
+        bugs.forEach((s, bugEntity) -> bugEntity.getCompiler().declareVariable("$proximity", "NO"));
+    }
+
+    private BugEntity getWinner() {
+        for (BugEntity b : bugs.values()) {
+            if (b.isAlive())
+                return b;
+        }
+        return null;
     }
 
     private void timeTick() {
@@ -136,11 +173,23 @@ public class SimulationWindowController implements CoreWarsController {
         }
     }
 
+    private void processShells() {
+        while (running) {
+            Executor.processShells();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void sceneUpdate() {
         while (running) {
             Platform.runLater(() -> {
                 mapRenderer.redrawMap(mapCanvas.getGraphicsContext2D(), model.getCurrentMap());
                 mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
+                mapRenderer.drawBullets(shells, mapCanvas.getGraphicsContext2D());
             });
             try {
                 Thread.sleep(50);

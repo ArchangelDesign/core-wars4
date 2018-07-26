@@ -20,6 +20,8 @@ public class Parser {
     private static final String REGEX_METHOD_CALL = "[a-zA-Z]*[ ]*\\([^\\).]*\\)[ ]*;";
     private static final String REGEX_CONDITION_CALL = "if_\\([^\\).]*\\)";
     private static final String REGEX_CONDITION_END_CALL = "endif;";
+    private static final String REGEX_ASSIGNMENT = "\\$[a-zA-Z0-9_]*[ ]*=[ ]*[\\$a-zA-Z0-9_\\(\\)][ ]*;";
+    private static final String REGEX_COMMENT = "\\/\\/.*?\n";
 
     /**
      * Parses given source file and returns a map where
@@ -62,12 +64,16 @@ public class Parser {
 
         for (int index = 0; index < lines.size(); index++) {
             String line = lines.get(index);
+            if (isComment(line))
+                continue;
             if (isMethodCall(line))
                 addMethod(line, result);
             else if (isConditionalStartCall(line))
                 addConditionStart(line, result);
             else if (isConditionalEndCall(line))
                 addConditionStop(line, result);
+            else if (isAssignment(line))
+                addAssignment(line, result);
         }
 
         return result;
@@ -79,6 +85,16 @@ public class Parser {
 
     private static void addConditionStop(String rawLine, Stack stack) {
         stack.addInstruction(new Instruction("", new HashMap<>(), InstructionType.CONDITION_END));
+    }
+
+    private static void addAssignment(String rawLine, Stack stack) {
+        String variableName = getAllMatches("\\$[a-zA-Z0-9_]*", rawLine).stream().findFirst().orElse(null);
+        if (variableName == null)
+            return;
+        String variableValue = getAllMatches("(?<=(\\$[a-zA-Z0-9_]{1,50}[ ]{0,5}=[ ]{0,5}))[\\$a-zA-Z0-9_]*(?=;)", rawLine).stream().findFirst().orElse(null);
+        HashMap<String, String> args = new HashMap<>();
+        args.put(variableValue, variableValue);
+        stack.addInstruction(new Instruction(variableName, args, InstructionType.ASSIGNMENT));
     }
 
     private static void addMethod(String rawLine, Stack stack) {
@@ -99,6 +115,14 @@ public class Parser {
 
     public static boolean isConditionalEndCall(String line) {
         return getAllMatches(REGEX_CONDITION_END_CALL, line).size() > 0;
+    }
+
+    public static boolean isAssignment(String line) {
+        return getAllMatches(REGEX_ASSIGNMENT, line).size() > 0;
+    }
+
+    public static boolean isComment(String line) {
+        return getAllMatches(REGEX_COMMENT, line).size() > 0;
     }
 
     /**
@@ -127,7 +151,7 @@ public class Parser {
 
         String firstArg = getAllMatches("[a-zA-Z0-9\\$]*(?=[ \\=\\>\\<])", innerPart).stream().findFirst().orElse("");
         String secondArg = getAllMatches("(?<=[\\= \\<\\>]{1,100})[a-zA-Z0-9\\$]{1,100}", innerPart).stream().findFirst().orElse("");
-        String operator = getAllMatches("(?<=[a-zA-Z0-9 \\$]{1,100})[\\=\\>\\<]{1,}(?=[a-zA-Z0-9 \\$]{1,100})", innerPart).stream().findFirst().orElse("");
+        String operator = getAllMatches("(?<=[a-zA-Z0-9 \\$]{1,100})[\\=\\>\\<!]{1,}(?=[a-zA-Z0-9 \\$]{1,100})", innerPart).stream().findFirst().orElse("");
 
         return new ConditionArgument(firstArg, secondArg, operator);
     }
