@@ -148,7 +148,9 @@ public class Executor {
 
     private static void shoot(BugEntity bug) {
         SoundPlayer.playSound(Sound.SND_SHOOT);
-        shells.add(new Shell((bug.getX() - 1) * 30, (bug.getY() - 1) * 30, bug.getDirection(), bug));
+        synchronized (shells) {
+            shells.add(new Shell((bug.getX() - 1) * 30, (bug.getY() - 1) * 30, bug.getDirection(), bug));
+        }
     }
 
     public static void processShells() {
@@ -177,9 +179,9 @@ public class Executor {
             );
 
             shells.removeIf(shell ->
-                currentMap.getCell(
-                        currentMap.getPosition(shell.getX()), currentMap.getPosition(shell.getY()))
-                        .getType() == CellType.BARRIER
+                    currentMap.getCell(
+                            currentMap.getPosition(shell.getX()), currentMap.getPosition(shell.getY()))
+                            .getType() == CellType.BARRIER
             );
 
             shells.removeIf(shell -> {
@@ -322,7 +324,7 @@ public class Executor {
                 int y = target.getY();
                 int w = Math.abs(x - bugEntity.getX());
                 int h = Math.abs(y - bugEntity.getY());
-                int range = (int) Math.sqrt(w*w + h*h);
+                int range = (int) Math.sqrt(w * w + h * h);
                 if (range < 4)
                     bugEntity.getCompiler().declareVariable("$proximity", "YES");
             }

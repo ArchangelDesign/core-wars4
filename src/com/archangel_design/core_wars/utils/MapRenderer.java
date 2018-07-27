@@ -43,7 +43,7 @@ public class MapRenderer {
     public void drawBugs(HashMap<String, BugEntity> bugs, GraphicsContext gc) {
         synchronized (bugs) {
             bugs.forEach((s, bugEntity) -> {
-                if (bugEntity.isAlive())
+                if (bugEntity.isAlive()) {
                     drawBug(
                             bugEntity.getRealX(30),
                             bugEntity.getRealY(30),
@@ -52,7 +52,13 @@ public class MapRenderer {
                             bugEntity.getDirection(),
                             gc
                     );
-                else
+                    drawBugName(
+                            bugEntity.getRealX(30),
+                            bugEntity.getRealY(30),
+                            bugEntity.getName(),
+                            gc
+                    );
+                } else
                     drawDeadBug(
                             bugEntity.getRealX(30),
                             bugEntity.getRealY(30),
@@ -170,6 +176,12 @@ public class MapRenderer {
 
     public void drawBug(int x, int y, int number, int size, Direction direction, GraphicsContext context) {
         context.drawImage(Assets.getImage("bug1.png", direction), x, y, size, size);
+    }
+
+    public void drawBugName(int x, int y, String name, GraphicsContext context) {
+        context.setFill(Color.BLACK);
+        String n = name.length() > 5 ? name.substring(0, 5) : name;
+        context.fillText(n, x, y);
     }
 
     public void drawDeadBug(int x, int y, int number, int size, Direction direction, GraphicsContext context) {
