@@ -18,9 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class SimulationWindowController implements CoreWarsController {
 
@@ -46,8 +44,6 @@ public class SimulationWindowController implements CoreWarsController {
     private long cycles = 0;
 
     private boolean running = true;
-
-    private int currentPortal;
 
     @FXML
     Canvas mapCanvas;
@@ -239,16 +235,20 @@ public class SimulationWindowController implements CoreWarsController {
 
         Logger.debug("placing bugs on map...");
 
-        currentPortal = 0;
+        List<String> keys = new ArrayList(bugs.keySet());
+        Collections.shuffle(keys);
+        Integer currentPortal = 0;
 
-        bugs.forEach((s, bugEntity) -> {
+        for (String key : keys) {
+            BugEntity bugEntity = bugs.get(key);
             int x = (int) portals.get(currentPortal).getWidth();
             int y = (int) portals.get(currentPortal).getHeight();
+            String s = bugEntity.getName();
             Logger.debug(String.format("placing %s on %dx%d", s, x, y));
             bugEntity.setX(x)
                     .setY(y);
             currentPortal++;
-        });
+        }
 
         mapRenderer.drawBugs(bugs, mapCanvas.getGraphicsContext2D());
     }

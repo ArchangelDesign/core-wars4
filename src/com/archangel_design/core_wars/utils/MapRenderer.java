@@ -41,26 +41,28 @@ public class MapRenderer {
     }
 
     public void drawBugs(HashMap<String, BugEntity> bugs, GraphicsContext gc) {
-        bugs.forEach((s, bugEntity) -> {
-            if (bugEntity.isAlive())
-                drawBug(
-                        bugEntity.getRealX(30),
-                        bugEntity.getRealY(30),
-                        1,
-                        30,
-                        bugEntity.getDirection(),
-                        gc
-                );
-            else
-                drawDeadBug(
-                        bugEntity.getRealX(30),
-                        bugEntity.getRealY(30),
-                        1,
-                        30,
-                        bugEntity.getDirection(),
-                        gc
-                );
-        });
+        synchronized (bugs) {
+            bugs.forEach((s, bugEntity) -> {
+                if (bugEntity.isAlive())
+                    drawBug(
+                            bugEntity.getRealX(30),
+                            bugEntity.getRealY(30),
+                            1,
+                            30,
+                            bugEntity.getDirection(),
+                            gc
+                    );
+                else
+                    drawDeadBug(
+                            bugEntity.getRealX(30),
+                            bugEntity.getRealY(30),
+                            1,
+                            30,
+                            bugEntity.getDirection(),
+                            gc
+                    );
+            });
+        }
     }
 
     public void drawBullets(final List<Shell> bullets, GraphicsContext gc) {
