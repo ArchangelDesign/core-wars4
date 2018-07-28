@@ -19,9 +19,14 @@ public class Map {
         return (int) Math.ceil(realPosition / cellSize);
     }
 
-    public Integer getPosition(int realPosition) {
+    public Integer getCenterPosition(int realPosition) {
         return ((realPosition + 15) / cellSize) + 1;
     }
+
+    public Integer getPosition(int realPosition) {
+        return (realPosition / cellSize) + 1;
+    }
+
 
     class Row extends HashMap<Integer, Cell> {
     }

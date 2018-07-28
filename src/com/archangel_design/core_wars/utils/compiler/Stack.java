@@ -66,4 +66,8 @@ public class Stack {
     public void reset() {
         currentInstruction = 0;
     }
+
+    public int getCurrentAddress() {
+        return currentInstruction;
+    }
 }

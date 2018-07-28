@@ -4,10 +4,11 @@ import com.archangel_design.core_wars.utils.*;
 import com.archangel_design.core_wars.utils.bugs.BugEntity;
 import com.archangel_design.core_wars.utils.bugs.Direction;
 import com.archangel_design.core_wars.utils.compiler.exception.NoLoopMethodException;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -19,6 +20,8 @@ public class Executor {
     private static Map currentMap;
     private static HashMap<String, BugEntity> bugList;
     private static volatile List<Shell> shells;
+    private static Label debugBugName;
+    private static Label currentInstructionLabel;
 
     public static void setDebugMode(boolean debugMode) {
         Executor.debugMode = debugMode;
@@ -37,7 +40,38 @@ public class Executor {
         if (!methods.containsKey(bug.getCompiler().getCurrentMethod()))
             throw new NoLoopMethodException(String.format("No %s method for bug %s.", bug.getCompiler().getCurrentMethod(), bug.getName()));
 
+        int currentAddress = bug.getCompiler().getCurrentStack().getCurrentAddress();
         Instruction instruction = bug.getCompiler().getMethods().get(bug.getCompiler().getCurrentMethod()).getNext();
+        if (bug.getName().equals(debugBugName.getText())) {
+            switch (instruction.getType()) {
+                case CONDITION_START:
+                    Platform.runLater(() -> currentInstructionLabel.setText(
+                            currentAddress +
+                            " Condition: "
+                                    + instruction.getConditionArgument().getArg1()
+                                    + " " + instruction.getConditionArgument().getOperator() + " "
+                                    + instruction.getConditionArgument().getArg2()
+                    ));
+                    break;
+                case CONDITION_END:
+                    Platform.runLater(() -> currentInstructionLabel.setText(
+                            currentAddress + " condition end."
+                    ));
+                    break;
+                case METHOD_CALL:
+                    Platform.runLater(() -> currentInstructionLabel.setText(
+                            currentAddress + " " + instruction.getName() + " "
+                            + instruction.getArguments().toString()
+                    ));
+                    break;
+                case ASSIGNMENT:
+                    Platform.runLater(() -> currentInstructionLabel.setText(
+                            currentAddress + " "
+                            + instruction.getName() + " = " + instruction.getArguments().toString()
+                    ));
+
+            }
+        }
         if (instruction == null)
             return;
         switch (instruction.getType()) {
@@ -180,13 +214,13 @@ public class Executor {
 
             shells.removeIf(shell ->
                     currentMap.getCell(
-                            currentMap.getPosition(shell.getX()), currentMap.getPosition(shell.getY()))
+                            currentMap.getCenterPosition(shell.getX()), currentMap.getCenterPosition(shell.getY()))
                             .getType() == CellType.BARRIER
             );
 
             shells.removeIf(shell -> {
-                int shellX = currentMap.getPosition(shell.getX());
-                int shellY = currentMap.getPosition(shell.getY());
+                int shellX = currentMap.getCenterPosition(shell.getX());
+                int shellY = currentMap.getCenterPosition(shell.getY());
                 for (BugEntity bugEntity : bugList.values()) {
                     if (bugEntity.getX() == shellX && bugEntity.getY() == shellY && !bugEntity.getName().equals(shell.getOwner().getName()) && bugEntity.isAlive()) {
                         Logger.info(String.format("[%s] kills [%s] with a shell.", shell.getOwner().getName(), bugEntity.getName()));
@@ -529,5 +563,13 @@ public class Executor {
 
     public static void setShells(List<Shell> shells) {
         Executor.shells = shells;
+    }
+
+    public static void setDebugBugName(Label debugBugName) {
+        Executor.debugBugName = debugBugName;
+    }
+
+    public static void setInstructionLabel(Label currentInstruction) {
+        currentInstructionLabel = currentInstruction;
     }
 }

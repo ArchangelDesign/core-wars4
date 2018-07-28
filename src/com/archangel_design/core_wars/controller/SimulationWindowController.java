@@ -31,6 +31,12 @@ public class SimulationWindowController implements CoreWarsController {
     @FXML
     Label cyclesLabel;
 
+    @FXML
+    Label debugBugName;
+
+    @FXML
+    Label currentInstruction;
+
     SimulationWindowModel model;
 
     Stage parentStage;
@@ -45,6 +51,8 @@ public class SimulationWindowController implements CoreWarsController {
 
     private boolean running = true;
 
+    private long delay = 80;
+
     @FXML
     Canvas mapCanvas;
 
@@ -52,6 +60,7 @@ public class SimulationWindowController implements CoreWarsController {
 
     @Override
     public void onShow() {
+        console.clear();
         cycles = 0;
         Logger.setConsole(console);
         mapCanvas.getGraphicsContext2D().clearRect(0, 0, 600, 600);
@@ -86,6 +95,8 @@ public class SimulationWindowController implements CoreWarsController {
         Executor.setCurrentMap(model.getCurrentMap());
         Executor.setBugs(bugs);
         Executor.setShells(shells);
+        Executor.setDebugBugName(debugBugName);
+        Executor.setInstructionLabel(currentInstruction);
         resetBugs();
         SoundPlayer.playSound(Sound.SND_BUZZER);
         new Thread(this::sceneUpdate).start();
@@ -107,7 +118,7 @@ public class SimulationWindowController implements CoreWarsController {
             Executor.sendProximityAlerts();
 
             try {
-                Thread.sleep(80);
+                Thread.sleep(delay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -262,5 +273,30 @@ public class SimulationWindowController implements CoreWarsController {
                 }
         );
         Logger.info("bugs compiled.");
+    }
+
+    public void onSlowerClicked() {
+        delay += 10;
+    }
+
+    public void onFasterClicked() {
+        if (delay < 90)
+            return;
+        delay -= 10;
+    }
+
+    public void onRestartClicked() {
+        running = false;
+        onShow();
+    }
+
+    public void onCanvasClicked(javafx.scene.input.MouseEvent event) {
+        bugs.forEach(
+                (s, bugEntity) -> {
+                    if (bugEntity.getX() == model.getCurrentMap().getPosition((int) event.getX()) &&
+                        bugEntity.getY() == model.getCurrentMap().getPosition((int) event.getY())) {
+                        debugBugName.setText(bugEntity.getName());
+                    }
+                });
     }
 }
