@@ -8,6 +8,7 @@ function onStart() {
 function loop() {
 
     if_($initialized != 1)
+        $initialized = 1;
         shoot();
         turLeft();
         shoot();
@@ -15,9 +16,47 @@ function loop() {
         shoot();
         turnLeft();
         shoot();
+        turnLeft();
     endif;
 
-    $initialized = 1;
+    if_($detected == YES)
+        resetDetection();
+        turnLeft();
+        scanForward();
+        if_($scanResult == EMPTY)
+            move();
+            loop();
+        endif;
+        turnRight();
+        turnRight();
+        scanForward();
+        if_($scanResult == EMPTY)
+            move();
+            loop();
+        endif;
+        shoot();
+        turnRight();
+        turnRight();
+        shoot();
+    endif;
+
+    longScan();
+    if_($scanResult == BUG)
+        shoot();
+    endif;
+
+    turnLeft();
+    longScan();
+    if_($scanResult == BUG)
+        shoot();
+    endif;
+    turnRight();
+    turnRight();
+    longScan();
+    if_($scanResult == BUG)
+        shoot();
+    endif;
+    turnLeft();
 
     scanForward();
 
